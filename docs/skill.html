@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Read the skill - App design elements</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="index.html">Home</a>
+<div class="nav-h">Elements</div>
+<a href="elements/list-of-all-commands.html"><span class="n">1</span> List of all commands</a>
+<a href="elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="elements/mac-menu-bar.html"><span class="n">6</span> Mac menu bar</a>
+<a href="elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="settings.html"><span class="n">10</span> Settings window</a>
+<a class="sub" href="settings-history.html">Settings history</a>
+<a href="elements/your-agent-can-use-the-app.html"><span class="n">11</span> Your agent can use the app</a>
+<a href="elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="use-with-your-agent.html">Use with your agent</a>
+<a href="skill.html" aria-current="page">Read the skill</a>
+</nav>
+<main class="">
+<p class="note">Source and issues: <a href="https://github.com/techczech/app-design-elements">https://github.com/techczech/app-design-elements</a></p>
+<h1>App Design Elements</h1>
+<h2>What this is</h2>
+<p>One set of elements, built the same way in every app, so that a person who knows one app already knows how to drive the next. Commands, keys, menus, settings, help and agent access are not designed per app; each app fills the same frame with its own content.</p>
+<p>Three properties make it a system rather than a style guide:</p>
+<ul><li><strong>One registry, many readers.</strong> Every command is registered once. The palette, the menu bar, the cheat sheet, the shortcut settings and the agent's operation list are all generated from that registry, so none of them can drift from the others.</li><li><strong>Same gesture, same meaning, every app.</strong> Reserved chords, menu layout and settings shape are identical across apps. Divergence is allowed only where an app's domain demands it, and is written down.</li><li><strong>The agent is a user.</strong> Anything the app can do with content, an agent can do through the same typed operations the UI calls; settings are readable and changeable by agents through the same changelog the user sees.</li></ul>
+<h2>The elements</h2>
+<table><thead><tr><th>#</th><th>Element</th><th>Rule in one line</th><th>Reference</th></tr></thead><tbody><tr><td>1</td><td>Command registry</td><td>Every command: id, name in the user's words, default chord or none, availability, run function. A keydown handler that is not a registered command is a defect.</td><td><code>references/commands-and-keyboard.md</code></td></tr><tr><td>2</td><td>Command palette <code>⌘⇧P</code></td><td>The complete command surface, each command showing its current chord; <code>⌘⇧,</code> rebinds the highlighted command in place.</td><td>same</td></tr><tr><td>3</td><td>Reserved chords</td><td><code>⌘⇧P</code> palette · <code>⌘⇧K</code> switcher · <code>⌘K</code> contextual actions · <code>⌘P</code> inspector · <code>⌘F</code>/<code>⌘⇧F</code> find/search everything · <code>⌘,</code> settings · <code>⌘/</code> cheat sheet. Never repurposed; an absent surface leaves its chord unbound.</td><td>same</td></tr><tr><td>4</td><td>Keyboard parity and rebinding</td><td>Every click target has a key path; every chord is rebindable; overrides are the truth.</td><td>same</td></tr><tr><td>5</td><td>Cheat sheet <code>⌘/</code></td><td>Generated from the registry with effective chords; works while typing.</td><td>same</td></tr><tr><td>6</td><td>macOS menu bar</td><td>Generated from the registry; every command except <code>noMenu</code> repeat keys (with reason); shows effective chords; fixed frame: App (Settings…), Edit, View, app menus, Window, Help.</td><td>same</td></tr><tr><td>7</td><td>Contextual actions <code>⌘K</code></td><td>What can be done to the current selection, here. Also the contextual help surface.</td><td>same</td></tr><tr><td>8</td><td>Switcher <code>⌘⇧K</code>, inspector <code>⌘P</code></td><td>Only when the app's locked journeys need them.</td><td>same</td></tr><tr><td>9</td><td>Find and search</td><td><code>⌘F</code> in the current document, <code>⌘⇧F</code> across everything. Default-on; omission needs a recorded reason.</td><td>same</td></tr><tr><td>10</td><td>Settings</td><td>Own window; one schema drives sections, search, per-setting reset, changelog; Shortcuts page; Accounts and keys encrypted; version from the running build. Present from the first release.</td><td><code>references/settings.md</code></td></tr><tr><td>11</td><td>Agent access</td><td>Content-verb law: every content operation is a typed headless verb the UI and the agent both call. Settings have a command-line read/change path through the same changelog.</td><td><code>references/agent-access.md</code></td></tr><tr><td>12</td><td>Onboarding</td><td>Temporary: a Get started button with a lifecycle that removes itself; an example project teaching commands as task chapters; a How this app works section.</td><td><code>references/onboarding-and-help.md</code></td></tr><tr><td>13</td><td>Help</td><td>After onboarding, help is contextual (<code>⌘K</code>, <code>⌘/</code>, Help menu), not a catalogue; no resident explainer copy in the interface.</td><td>same</td></tr><tr><td>14</td><td>Layout and visual</td><td>Application, not website; light is the identity, dark an option; bounded sections; scan axes and 70/30; negative space left; real icons; designed buttons; searchable, sortable lists.</td><td><code>references/layout-and-visual.md</code></td></tr><tr><td>15</td><td>States and errors</td><td>Empty, loading, refused, mid-operation, finished and error states are designed; errors are human-readable with a recovery action.</td><td>same</td></tr><tr><td>16</td><td>Wording</td><td>Plain literal sentences: what you do and what you get; one spelling convention per app; no internal jargon or ids as chrome.</td><td>same</td></tr></tbody></table>
+<h2>How to use it</h2>
+<ul><li><strong>New app:</strong> every element from the first release. Elements 1–7, 9, 10, 11 (content verbs) and 14–16 are unconditional. 8 depends on the journeys. 12–13 apply when the app has a first run.</li><li><strong>Design round:</strong> each direction is drawn inside this frame. A direction that moves Settings into a sheet, invents a different palette chord or drops the menu bar is out of bounds unless the owner reopens the rule.</li><li><strong>Existing app:</strong> adopt an element fully the next time its surface is being worked on (no partial adoption, no silent drift). The owner may order a retrofit sweep.</li><li><strong>Release check:</strong> walk the table. Record each element as met, not applicable (with reason) or failing. A failing unconditional element blocks "done".</li></ul>
+<h2>Tests every app carries</h2>
+<ol><li>Every reserved chord resolves to its surface or is unbound.</li><li>Every cheat-sheet row and every menu item shows its command's effective chord.</li><li>Every command is in the palette, in the bindable set, and in the menu bar or <code>noMenu</code> with a reason.</li><li>Zero chord collisions.</li><li>Every settings key in the schema appears in the window, is found by search, resets to its default, and writes a changelog entry; the command-line path writes the same entry.</li><li>Every content command maps to a verb.</li></ol>
+</main>
+</body>
+</html>

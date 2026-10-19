@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your agent can use the app - App design elements</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="../index.html">Home</a>
+<div class="nav-h">Elements</div>
+<a href="../elements/list-of-all-commands.html"><span class="n">1</span> List of all commands</a>
+<a href="../elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="../elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="../elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="../elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="../elements/mac-menu-bar.html"><span class="n">6</span> Mac menu bar</a>
+<a href="../elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="../elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="../elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="../settings.html"><span class="n">10</span> Settings window</a>
+<a class="sub" href="../settings-history.html">Settings history</a>
+<a href="../elements/your-agent-can-use-the-app.html" aria-current="page"><span class="n">11</span> Your agent can use the app</a>
+<a href="../elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="../elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="../elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="../elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="../elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="../use-with-your-agent.html">Use with your agent</a>
+<a href="../skill.html">Read the skill</a>
+</nav>
+<main class="">
+<h1>11. Your agent can use the app</h1>
+<p class="rule">Whatever an app can do with your content, an AI agent can do through the same actions the interface uses, and it can read and change settings from the command line, with each change recorded in the same list you see.</p>
+<h2 class="detail">The rule in detail</h2>
+<h2>The content-verb law</h2>
+<p>If the app can do it with content, the agent can do it. An app feature operating on content that the agent cannot operate is the same defect class as a click target without a keyboard route.</p>
+<ul><li>Every content operation is a <strong>typed, headless verb</strong>: one implementation, the UI is one caller, the agent another.</li><li>The command registry classifies every command: content / view / settings / chrome. Every content command maps to a verb, enforced by the app's own tests. Chrome exclusions carry a declared reason (<code>ui-navigation</code>, <code>presentation</code>, <code>duplicate-of</code>).</li><li><strong>Posture floor per verb:</strong> reversible → direct, recorded, undoable; substantive rewrite → proposal (diff, accept/reject); destructive or externally irreversible → approval plus an execution journal. The request's intent may raise the gate ("suggest…" returns a proposal), never lower it.</li><li>Every feature design includes a verb table: verb, typed inputs, posture floor, context contribution. An agent journey is written only when the agent is a primary user of the feature.</li></ul>
+<h2>Settings</h2>
+<ul><li>Read and change through a command-line path (<code>&lt;app&gt; settings …</code>, <code>--json</code>), through the same store and the same changelog, marked as agent changes.</li><li>A CLI is not a back door: it goes through the same validation and recording as the UI.</li></ul>
+<h2>Discoverability</h2>
+<p>The agent's operation list is generated from the registry and the verb inventory, like the palette, so an agent can discover what the app can do without reading its code.</p>
+</main>
+</body>
+</html>

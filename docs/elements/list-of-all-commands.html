@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List of all commands - App design elements</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="../index.html">Home</a>
+<div class="nav-h">Elements</div>
+<a href="../elements/list-of-all-commands.html" aria-current="page"><span class="n">1</span> List of all commands</a>
+<a href="../elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="../elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="../elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="../elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="../elements/mac-menu-bar.html"><span class="n">6</span> Mac menu bar</a>
+<a href="../elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="../elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="../elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="../settings.html"><span class="n">10</span> Settings window</a>
+<a class="sub" href="../settings-history.html">Settings history</a>
+<a href="../elements/your-agent-can-use-the-app.html"><span class="n">11</span> Your agent can use the app</a>
+<a href="../elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="../elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="../elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="../elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="../elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="../use-with-your-agent.html">Use with your agent</a>
+<a href="../skill.html">Read the skill</a>
+</nav>
+<main class="">
+<h1>1. List of all commands</h1>
+<p class="rule">Every action has a name in plain words and, where it has one, a keyboard shortcut; the palette, menus, cheat sheet and shortcut settings are all built from this list.</p>
+<h2 class="detail">The rule in detail</h2>
+<h2>Registry</h2>
+<ul><li>Each command: <code>id</code>, user-facing <code>name</code> (the user's words, grouped by what they are doing), <code>defaultChord</code> or explicit none, <code>when</code>/availability, <code>run</code>, <code>menu</code> placement (menu, group, order) or <code>noMenu</code> with a reason, and a class (content / view / settings / chrome) for agent access.</li><li>Readers generated from it: palette, cheat sheet, Settings › Shortcuts, menu bar, agent operation list. Nothing hand-copies a chord.</li><li>Shipping a command keyless is fine; shipping it unfindable is not.</li></ul>
+<p class="note">Related elements from the same reference: <a href="command-palette.html">Command palette ⌘⇧P</a>, <a href="keyboard-shortcuts-every-app-keeps-the-same.html">Keyboard shortcuts every app keeps the same</a>, <a href="a-key-for-every-button-and-keys-you-can-change.html">A key for every button, and keys you can change</a>, <a href="shortcut-cheat-sheet.html">Shortcut cheat sheet ⌘/</a>, <a href="mac-menu-bar.html">Mac menu bar</a>, <a href="actions-for-what-you-have-selected.html">Actions for what you have selected ⌘K</a>, <a href="switcher-and-preview-panel.html">Switcher ⌘⇧K and preview panel ⌘P</a>, <a href="find-and-search.html">Find and search</a>.</p>
+</main>
+</body>
+</html>

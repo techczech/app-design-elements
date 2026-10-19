@@ -1,0 +1,37 @@
+:root { --ink:#1d2328; --muted:#5b6670; --line:#d9dee3; --bg:#ffffff; --side:#f5f7f9; --accent:#1a5fb4; --code:#eef1f4; }
+* { box-sizing:border-box; }
+html { font-size:16px; }
+body { margin:0; display:flex; min-height:100vh; color:var(--ink); background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; line-height:1.6; }
+nav.side { width:260px; flex:none; background:var(--side); border-right:1px solid var(--line);
+  padding:20px 14px; position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto; font-size:.9rem; }
+nav.side .brand { font-weight:600; margin:0 8px 14px; }
+nav.side .nav-h { margin:16px 8px 4px; font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+nav.side a { display:block; padding:4px 8px; border-radius:5px; color:var(--ink); text-decoration:none; }
+nav.side a:hover { background:#e6ebef; }
+nav.side a[aria-current="page"] { background:#dce6f3; font-weight:600; }
+nav.side a.sub { padding-left:2.4em; }
+nav.side .n { display:inline-block; width:1.4em; color:var(--muted); }
+main { flex:1; min-width:0; max-width:calc(70ch + 96px); padding:32px 48px 64px; }
+main.wide { max-width:none; }
+h1 { font-size:1.7rem; line-height:1.25; margin:0 0 .6em; }
+h2 { font-size:1.25rem; margin:1.8em 0 .5em; }
+h3 { font-size:1.05rem; margin:1.4em 0 .4em; }
+p, ul, ol { margin:.7em 0; }
+li { margin:.25em 0; }
+a { color:var(--accent); }
+code { background:var(--code); padding:.1em .35em; border-radius:4px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; }
+pre { background:var(--code); padding:12px 14px; border-radius:6px; overflow-x:auto; }
+pre code { background:none; padding:0; }
+table { border-collapse:collapse; width:100%; margin:1em 0; font-size:.93rem; }
+th, td { text-align:left; vertical-align:top; padding:8px 10px; border-bottom:1px solid var(--line); }
+th { background:var(--side); border-bottom:2px solid var(--line); font-weight:600; }
+td:first-child, th:first-child { white-space:nowrap; }
+.rule { font-size:1.08rem; padding:10px 14px; border-left:3px solid var(--accent); background:var(--side); margin:0 0 1.2em; }
+figure { margin:1.4em 0; }
+figure img { max-width:100%; border:1px solid var(--line); border-radius:6px; }
+figcaption { color:var(--muted); font-size:.9rem; margin-top:6px; }
+.placeholder { border:1px dashed var(--line); padding:12px; color:var(--muted); }
+iframe.mockup { width:100%; height:1040px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+h2.detail { font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:2em 0 .3em; }
+.note { color:var(--muted); font-size:.92rem; }

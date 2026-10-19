@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings - App design elements</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="index.html">Home</a>
+<div class="nav-h">Elements</div>
+<a href="elements/list-of-all-commands.html"><span class="n">1</span> List of all commands</a>
+<a href="elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="elements/mac-menu-bar.html"><span class="n">6</span> Mac menu bar</a>
+<a href="elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="settings.html" aria-current="page"><span class="n">10</span> Settings window</a>
+<a class="sub" href="settings-history.html">Settings history</a>
+<a href="elements/your-agent-can-use-the-app.html"><span class="n">11</span> Your agent can use the app</a>
+<a href="elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="use-with-your-agent.html">Use with your agent</a>
+<a href="skill.html">Read the skill</a>
+</nav>
+<main class="wide">
+<h1>10. Settings window</h1>
+<p class="rule">Opens in its own window with ⌘, from the first release; you can search it, see which settings you have changed and reset each one, review a list of every change and who made it, rebind shortcuts, and see the version you are running. Account keys are stored encrypted.</p>
+<p>How the history of changes works: <a href="settings-history.html">Settings history</a></p>
+<h2 class="detail">The rule in detail</h2>
+<p>Status: rules and the shared visual design are locked (2026-10-19).</p>
+<h2>Decided</h2>
+<ul><li><strong>Every app has Settings from its first release.</strong> Minimum: version read from the running build, a Shortcuts page covering every command, the app's real preferences.</li><li><strong>Own window</strong>, the macOS convention. Opened by <code>⌘,</code>, by App menu › Settings…, and by the palette. Not a sheet or panel over the main window. One instance; reopening focuses it.</li><li><strong>One schema.</strong> Each setting declared once: <code>key</code>, <code>label</code> (user's words), <code>section</code>, <code>type</code> (toggle, choice, text, number, path, chord, secret), <code>default</code>, validation, optional help line. The window, search, reset and changelog are generated from the schema; no hand-built form fields beside it.</li><li><strong>Search</strong> across labels, help lines and section names; results show the section they belong to.</li><li><strong>Changed from default is visible</strong> on each setting, with a per-setting Reset.</li><li><strong>Settings changelog</strong> (the Changes section): every change records old → new, when, and who (you / agent / app migration), each entry with Reset. Reset itself is recorded.</li><li><strong>Shortcuts page:</strong> every registry command, searchable, its effective chord, rebind in place, conflicts shown, reset one or all.</li><li><strong>Accounts and keys:</strong> connection status, add / replace / remove; the secret value is never displayed and never stored in a plain config file (macOS Keychain or the platform's encrypted store).</li><li><strong>About / version:</strong> the version of the running build, not a constant typed in the UI.</li><li><strong>Agent path:</strong> a command-line interface <code>&lt;app&gt; settings list | get &lt;key&gt; | set &lt;key&gt; &lt;value&gt; | reset &lt;key&gt; | changes</code>, with <code>--json</code>, writing through the same store and changelog. An open Settings window updates live when a setting changes from outside.</li><li><strong>Moving settings between Macs:</strong> by hand — Export settings… writes one file; Import settings… previews old → new, then applies; imported changes enter Changes attributed to the file, with Undo import. Account keys are never exported. No synced folder.</li><li><strong>Storage:</strong> one settings file in the app's user-data folder plus the changelog; the keymap overrides live in the same store, not browser storage.</li></ul>
+<h2>Typical sections</h2>
+<p>General · Appearance (light default, dark option) · app-specific sections · Shortcuts · Accounts and keys · Changes · About. App sections are named by what the user is doing, not by subsystem.</p>
+<h2>Locked design (2026-10-19)</h2>
+<p>Mockup: <code>design/2026-10-19-settings-locked/settings-window-locked-mockup.html</code> (16 frames; notes in <code>design-notes.md</code> beside it). Build to it.</p>
+<ul><li><strong>Frame:</strong> sidebar (search; shared sections; the app's own sections under its name; Changes and About pinned at the bottom) + one section as grouped cards + a fixed right inspector, 70/30. Window about 1000×690.</li><li><strong>Inspector:</strong> nothing selected → recent changes (who, when, Reset, link to all changes). Setting selected → what it does, default, current, changed by, history of this setting, Reset, the agent command. On Changes → the selected entry's setting.</li><li><strong>Agent change:</strong> row highlighted with "Changed by &lt;agent&gt; just now" and a link to its Changes entry; Changes badge shows new entries.</li><li><strong>Changes:</strong> newest first, filter by setting, filters All / You / Agents / App updates / Imports; each entry old → new, who, when, Reset; reset entries are themselves listed.</li><li><strong>Settings file:</strong> card at the bottom of General (Export settings…, Import settings…) and App menu items under Settings…. Export file records app version and Mac; never account keys. Import shows a preview sheet (count, old → new, skipped settings with reason, "already match" count), one Import button, no per-row checkboxes; refused state for a wrong file. Imported entries form one batch in Changes with Undo import; each entry resets on its own.</li><li><strong>Agent path additions:</strong> <code>settings import &lt;file&gt;</code>, <code>settings undo-import --last</code>, <code>settings export &lt;file&gt;</code>.</li></ul>
+<h2>Locked mockup</h2>
+<p class="note">The interactive mockup of the locked Settings window. <a href="settings-mockup.html">Open it on its own</a>.</p>
+<iframe class="mockup" src="settings-mockup.html" title="Settings window mockup"></iframe>
+</main>
+</body>
+</html>

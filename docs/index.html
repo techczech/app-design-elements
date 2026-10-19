@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home - App design elements</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="index.html" aria-current="page">Home</a>
+<div class="nav-h">Elements</div>
+<a href="elements/list-of-all-commands.html"><span class="n">1</span> List of all commands</a>
+<a href="elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="elements/mac-menu-bar.html"><span class="n">6</span> Mac menu bar</a>
+<a href="elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="settings.html"><span class="n">10</span> Settings window</a>
+<a class="sub" href="settings-history.html">Settings history</a>
+<a href="elements/your-agent-can-use-the-app.html"><span class="n">11</span> Your agent can use the app</a>
+<a href="elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="use-with-your-agent.html">Use with your agent</a>
+<a href="skill.html">Read the skill</a>
+</nav>
+<main class="">
+<h1>App design elements</h1>
+<p>Every Mac app I build has the same sixteen elements. If you know how to use one of my apps, you already know how to use the next: the same keyboard shortcuts open the same things, the menus are laid out the same way, and Settings looks the same.</p>
+<p>Each command in an app is defined once, in one list. The command palette, the menu bar, the cheat sheet of keyboard shortcuts and the list of actions an AI agent can ask the app to perform are all built from that list, so they always agree. If you change a shortcut in Settings, the menu bar and the cheat sheet show the new one.</p>
+<p>An app differs from the others only where its subject requires it, and the difference is written down. Anything an app can do with your content, an AI agent can do too, using the same actions the buttons and menus use. An agent can also read and change settings, and each change it makes appears in the list of changes you see in Settings.</p>
+<p>This site has one page per element, and the full Settings design to click through. The table below lists all sixteen elements in plain terms.</p>
+<h2>The 16 elements</h2>
+<table><thead><tr><th>#</th><th>Name</th><th>What it means for you</th></tr></thead><tbody>
+<tr><td>1</td><td><a href="elements/list-of-all-commands.html">List of all commands</a></td><td>Every action has a name in plain words and, where it has one, a keyboard shortcut; the palette, menus, cheat sheet and shortcut settings are all built from this list.</td></tr>
+<tr><td>2</td><td><a href="elements/command-palette.html">Command palette ⌘⇧P</a></td><td>Shows every command in the app with its current shortcut, and ⌘⇧, lets you change the shortcut of the highlighted command on the spot.</td></tr>
+<tr><td>3</td><td><a href="elements/keyboard-shortcuts-every-app-keeps-the-same.html">Keyboard shortcuts every app keeps the same</a></td><td>⌘⇧P opens the palette, ⌘K the actions for your selection, ⌘, Settings, ⌘/ the cheat sheet, ⌘F finds in the document and ⌘⇧F searches everything; ⌘⇧K and ⌘P are used the same way in apps that have a switcher or a preview panel, and a key stays unused in an app that lacks that feature.</td></tr>
+<tr><td>4</td><td><a href="elements/a-key-for-every-button-and-keys-you-can-change.html">A key for every button, and keys you can change</a></td><td>Whatever you can click, you can also reach from the keyboard, and you can reassign any shortcut; your choice is the one that counts.</td></tr>
+<tr><td>5</td><td><a href="elements/shortcut-cheat-sheet.html">Shortcut cheat sheet ⌘/</a></td><td>Lists every shortcut as it is set now, including your own changes, and opens while you are typing.</td></tr>
+<tr><td>6</td><td><a href="elements/mac-menu-bar.html">Mac menu bar</a></td><td>Built from the same list of commands, with the current shortcut beside each item, in the same order in every app: the app's own menu (with Settings…), Edit, View, the app's menus, Window and Help.</td></tr>
+<tr><td>7</td><td><a href="elements/actions-for-what-you-have-selected.html">Actions for what you have selected ⌘K</a></td><td>Lists what you can do to the current selection, where you are; it also serves as help for that place.</td></tr>
+<tr><td>8</td><td><a href="elements/switcher-and-preview-panel.html">Switcher ⌘⇧K and preview panel ⌘P</a></td><td>Included only in apps where the work needs a quick way to jump between things or to look at one in detail.</td></tr>
+<tr><td>9</td><td><a href="elements/find-and-search.html">Find and search</a></td><td>⌘F finds within the document you have open and ⌘⇧F searches across everything; every app has both unless a reason for leaving one out is written down.</td></tr>
+<tr><td>10</td><td><a href="settings.html">Settings window</a></td><td>Opens in its own window with ⌘, from the first release; you can search it, see which settings you have changed and reset each one, review a list of every change and who made it, rebind shortcuts, and see the version you are running. Account keys are stored encrypted.</td></tr>
+<tr><td>11</td><td><a href="elements/your-agent-can-use-the-app.html">Your agent can use the app</a></td><td>Whatever an app can do with your content, an AI agent can do through the same actions the interface uses, and it can read and change settings from the command line, with each change recorded in the same list you see.</td></tr>
+<tr><td>12</td><td><a href="elements/getting-started.html">Getting started</a></td><td>A Get started button that removes itself once you have used it, an example project that teaches the commands one task at a time, and a section explaining how the app works.</td></tr>
+<tr><td>13</td><td><a href="elements/help-where-you-are.html">Help where you are</a></td><td>After getting started, help comes from ⌘K, ⌘/ and the Help menu; no explanatory text stays on screen permanently.</td></tr>
+<tr><td>14</td><td><a href="elements/layout-and-look.html">Layout and look</a></td><td>Each app looks like a Mac application, not a website: light by default with dark as an option, clearly separated panels, real icons, designed buttons, lists you can search and sort, and empty space on the left rather than the right.</td></tr>
+<tr><td>15</td><td><a href="elements/empty-loading-and-error-screens.html">Empty, loading and error screens</a></td><td>Every screen has a designed look for being empty, loading, refused, in the middle of an operation, finished or in error; an error says in plain words what went wrong and what you can do next.</td></tr>
+<tr><td>16</td><td><a href="elements/plain-wording.html">Plain wording</a></td><td>Text says what you do and what you get, in one spelling convention per app, with no internal jargon or ids on screen.</td></tr>
+</tbody></table>
+<h2>Design patterns</h2>
+<p><a href="settings-history.html">Settings history</a>: a record of every change to a setting, with reset and undo.</p>
+</main>
+</body>
+</html>

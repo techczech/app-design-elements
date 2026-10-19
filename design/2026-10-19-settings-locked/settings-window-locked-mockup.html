@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Settings window — A with C's inspector and B's recent changes (locked candidate)</title>
+<meta name="viewport" content="width=1200">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#e4e5e9;color:#1d1d1f;font:13px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:root{--mono:ui-monospace,"SF Mono",Menlo,monospace;--accent:#0a64d8;--ink2:#6b6f78;--line:#e6e7eb}
+.page{width:1180px;margin:0 auto;padding:20px 0 30px}
+/* identity + frame bar */
+.ident{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.badge{background:#1f9d4d;color:#fff;font-size:20px;font-weight:700;padding:14px 18px;border-radius:6px;white-space:nowrap}
+.ident .nm{font-size:22px;font-weight:700}
+.ident .sub{color:#555a63;font-size:13px;margin-top:3px}
+.fbar{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+.fbar button{border:1px solid #c3c6cd;background:#f4f5f7;padding:5px 9px;border-radius:5px;cursor:pointer;display:flex;gap:6px;align-items:center;font-size:12px}
+.fbar button b{display:inline-block;min-width:16px;height:16px;line-height:16px;text-align:center;background:#d3d6dc;border-radius:3px;font-size:11px}
+.fbar button.on{background:#1d1d1f;color:#fff;border-color:#1d1d1f}
+.fbar button.on b{background:#555;color:#fff}
+.stage{position:relative;width:1180px;height:790px;background:#a7adb8;border-radius:6px;overflow:hidden}
+/* menu bar */
+.menubar{position:absolute;left:0;right:0;top:0;height:24px;background:#e9eaee;border-bottom:1px solid #c5c8cf;display:flex;align-items:center;padding:0 12px;gap:18px;font-size:13px;z-index:30}
+.menubar .ap{font-weight:700}
+.menubar .m{padding:2px 8px;border-radius:4px}
+.menubar .m.open{background:#0a64d8;color:#fff}
+.menubar .sp{flex:1}
+.appmenu{position:absolute;left:40px;top:26px;width:270px;background:#f2f2f5;border:1px solid #b9bcc4;border-radius:8px;padding:5px;z-index:31;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.appmenu div{padding:4px 10px;border-radius:4px;display:flex;justify-content:space-between}
+.appmenu div.hl{background:#0a64d8;color:#fff}
+.appmenu div.dim{color:#8a8d95}
+.appmenu hr{border:0;border-top:1px solid #d3d5db;margin:4px 6px}
+/* window */
+.win{position:absolute;left:90px;top:50px;width:1000px;height:690px;background:#ececf0;border-radius:10px;border:1px solid #8b909a;box-shadow:0 20px 50px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-direction:column}
+.titlebar{height:40px;flex:none;background:#f6f6f8;border-bottom:1px solid #cfd1d8;display:flex;align-items:center;padding:0 14px;position:relative}
+.lights{display:flex;gap:8px}
+.lights i{width:12px;height:12px;border-radius:50%;display:block}
+.lights i:nth-child(1){background:#ff5f57}.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+.titlebar .tt{position:absolute;left:0;right:0;text-align:center;font-weight:600;font-size:13px;pointer-events:none}
+.body{flex:1;display:flex;min-height:0}
+/* sidebar */
+.side{width:210px;flex:none;background:#e3e3e8;border-right:1px solid #cbcdd4;display:flex;flex-direction:column}
+.search{margin:10px 10px 6px;position:relative}
+.search input{width:100%;height:28px;border:1px solid #c2c4cc;border-radius:6px;background:#fff;padding:0 26px 0 27px;font:inherit;outline:none}
+.search input.f{border-color:#0a64d8;box-shadow:0 0 0 3px rgba(10,100,216,.25)}
+.search .si{position:absolute;left:8px;top:7px;width:14px;height:14px;color:#6b6f78}
+.search .cl{position:absolute;right:6px;top:6px;width:16px;height:16px;color:#6b6f78;cursor:pointer;display:none}
+.search.has .cl{display:block}
+.navwrap{flex:1;overflow:auto;padding:0 8px}
+.grp{font-size:11px;font-weight:600;color:#6b6f78;text-transform:uppercase;letter-spacing:.04em;padding:9px 8px 4px}
+.nav{display:flex;align-items:center;gap:8px;height:28px;padding:0 8px;border-radius:6px;cursor:pointer;margin-bottom:1px}
+.nav svg{width:16px;height:16px;flex:none;color:#4a4e57}
+.nav:hover{background:#d6d7de}
+.nav.sel{background:#0a64d8;color:#fff}
+.nav.sel svg{color:#fff}
+.nav .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav .cnt{font-size:11px;min-width:18px;height:16px;line-height:16px;text-align:center;border-radius:8px;background:#c9ccd4;color:#2a2d33;padding:0 5px}
+.nav.sel .cnt{background:rgba(255,255,255,.3);color:#fff}
+.nav .cnt.new{background:#7a3fd1;color:#fff}
+.nav .cnt.imp{background:#0f7b74;color:#fff}
+.nav.muted{color:#9a9da6}.nav.muted svg{color:#a6a9b1}
+.sidefoot{flex:none;background:#d6d7de;border-top:1px solid #c3c5cc;padding:6px 8px}
+/* main pane */
+.pane{flex:1;display:flex;flex-direction:column;min-width:0;background:#ececf0}
+.phead{height:46px;flex:none;background:#f8f8fa;border-bottom:1px solid #cfd1d8;display:flex;align-items:center;padding:0 14px;gap:10px}
+.phead>svg{width:18px;height:18px;color:#4a4e57}
+.phead h1{font-size:16px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phead .meta{color:#6b6f78;font-size:12px;white-space:nowrap}
+.pscroll{flex:1;overflow:auto;padding:14px}
+.card{background:#fff;border:1px solid #d0d2d9;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.card>.ch{background:#dcdde3;padding:6px 12px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#3c3f46;display:flex;align-items:center;gap:8px;border-bottom:1px solid #cbcdd4;min-height:28px}
+.card>.ch .sp{flex:1}
+.card>.ch .lk{text-transform:none;letter-spacing:0;font-weight:500;color:#0a64d8;display:flex;gap:4px;align-items:center;cursor:pointer}
+.card>.ch svg{width:13px;height:13px}
+.card>.ch.imp{background:#d3ebe8;color:#0b4f4a;border-bottom-color:#b5d9d4}
+.card>.ch.imp .fn{text-transform:none;letter-spacing:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row{display:flex;align-items:center;gap:12px;padding:8px 12px;min-height:42px;border-bottom:1px solid #e6e7eb;cursor:default}
+.row:last-child{border-bottom:0}
+.row .lab{flex:1;min-width:0}
+.row .t{display:flex;align-items:center;gap:7px;font-weight:500;flex-wrap:wrap}
+.row .h{color:#6b6f78;font-size:12px;margin-top:1px}
+.row .ctl{display:flex;align-items:center;gap:6px;flex:none}
+.row.changed .t::before{content:"";width:7px;height:7px;border-radius:50%;background:#0a64d8;flex:none;margin-left:-2px}
+.row.agent{background:#f6f0fd;box-shadow:inset 3px 0 0 #7a3fd1}
+.row.agent .t::before{background:#7a3fd1}
+.row.err .h.e{color:#c4001a;display:flex;gap:4px;align-items:center;font-weight:500}
+.row.err .h.e svg{width:13px;height:13px;flex:none}
+.row.dis .t,.row.dis .ctl{opacity:.45}
+.row.dis .h.d{color:#6b6f78;display:flex;gap:4px;align-items:center}
+.row.dis .h.d svg{width:12px;height:12px}
+.row.sel{box-shadow:inset 0 0 0 2px #0a64d8;background:#f1f7ff}
+.row.agent.sel{box-shadow:inset 3px 0 0 #7a3fd1,inset 0 0 0 2px #7a3fd1;background:#f3ebfd}
+.alink{color:#5b27a6;display:flex;gap:4px;align-items:center;font-size:12px;margin-top:2px}
+.alink a{text-decoration:underline;cursor:pointer}
+.alink svg{width:12px;height:12px}
+.tag{font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.tag svg{width:11px;height:11px}
+.tag.chg{background:#dce9fb;color:#0a4fae}
+.tag.ag{background:#ebe0fa;color:#5b27a6}
+.tag.you{background:#dce9fb;color:#0a4fae}
+.tag.app{background:#e4e5e9;color:#3c3f46}
+.tag.imp{background:#d3ebe8;color:#0b4f4a}
+.tag.rs{background:#fdecc8;color:#7a5200}
+.tag.none{background:#e8eaee;color:#4a4e57}
+.btn{height:24px;border:1px solid #c3c5cc;background:#fff;border-radius:5px;padding:0 9px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.btn svg{width:13px;height:13px}
+.btn:hover{background:#f3f4f6}
+.btn.pri{background:#0a64d8;border-color:#0a54b8;color:#fff}
+.btn.dng{color:#c4001a}
+.btn.dngp{background:#d70015;border-color:#b00011;color:#fff}
+.btn.lg{height:28px;padding:0 12px}
+.btn.dis{opacity:.45;cursor:default}
+.rst{height:22px;border:0;background:transparent;color:#0a64d8;display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:0 4px;border-radius:4px;white-space:nowrap}
+.rst svg{width:12px;height:12px}
+.rst:hover,.rst.hv{background:#e4eefc}
+.tg{width:36px;height:20px;border-radius:10px;background:#c5c7ce;position:relative;display:inline-block;cursor:pointer;flex:none}
+.tg i{position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:left .12s}
+.tg.on{background:#1f9d4d}.tg.on i{left:18px}
+.sel2{height:24px;min-width:130px;border:1px solid #c3c5cc;border-radius:5px;background:#fff;padding:0 6px 0 9px;display:inline-flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 0 rgba(0,0,0,.06);white-space:nowrap}
+.sel2 svg{width:13px;height:13px;color:#6b6f78}
+.txt{height:24px;width:170px;border:1px solid #c3c5cc;border-radius:5px;padding:0 8px;font:inherit;background:#fff}
+.num{height:24px;width:100px;border:1px solid #c3c5cc;border-radius:5px;background:#fff;display:inline-flex;align-items:center;padding-left:8px}
+.num input{border:0;outline:0;width:38px;font:inherit;background:transparent;text-align:right}
+.num .u{color:#6b6f78;margin-left:3px;flex:1}
+.num .st{width:22px;height:100%;border-left:1px solid #dcdee3;display:flex;align-items:center;justify-content:center;color:#6b6f78}
+.num .st svg{width:13px;height:13px}
+.num.bad{border-color:#d70015;box-shadow:0 0 0 3px rgba(215,0,21,.18)}
+.path{display:inline-flex;align-items:center;gap:6px;height:24px;max-width:170px;border:1px solid #c3c5cc;border-radius:5px;background:#f6f6f8;padding:0 8px;color:#2a2d33;overflow:hidden;white-space:nowrap}
+.path svg{width:13px;height:13px;color:#6b6f78;flex:none}
+.path span{overflow:hidden;text-overflow:ellipsis}
+.kbd{display:inline-flex;align-items:center;height:24px;min-width:58px;justify-content:center;padding:0 9px;border:1px solid #c3c5cc;border-bottom-width:2px;border-radius:5px;background:#fafafb;font-weight:600;letter-spacing:.06em;white-space:nowrap}
+.kbd.rec{border-color:#0a64d8;box-shadow:0 0 0 3px rgba(10,100,216,.25);color:#0a64d8;letter-spacing:0;font-weight:500;min-width:140px}
+.kbd.conf{border-color:#d70015;color:#c4001a}
+.secv{display:inline-flex;align-items:center;gap:6px;height:24px;color:#6b6f78;white-space:nowrap}
+.secv b{color:#1d1d1f;letter-spacing:.1em;font-weight:400}
+.secv svg{width:13px;height:13px}
+.seg{display:inline-flex;border:1px solid #c3c5cc;border-radius:5px;overflow:hidden;background:#fff}
+.seg span{padding:3px 11px;border-left:1px solid #c3c5cc;white-space:nowrap}
+.seg span:first-child{border-left:0}
+.seg span.on{background:#0a64d8;color:#fff}
+mark{background:#ffe27a;color:inherit;border-radius:2px;padding:0 1px}
+/* inspector */
+.insp{width:240px;flex:none;background:#f4f5f8;border-left:1px solid #b9bdc7;display:flex;flex-direction:column;min-height:0}
+.insp>h4{height:30px;flex:none;background:#d4d7de;border-bottom:1px solid #b5bac5;display:flex;align-items:center;gap:6px;padding:0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#2b2e35}
+.insp>h4 svg{width:13px;height:13px}
+.ib{padding:10px 12px 12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.ib .nm{font-size:15px;font-weight:650;line-height:1.2}
+.ib .where{font-size:11.5px;color:var(--ink2);margin-top:3px;display:flex;align-items:center;gap:4px}
+.ib .where svg{width:12px;height:12px}
+.ib p{font-size:12px;line-height:1.4;color:#2c2f36}
+.kv{background:#fff;border:1px solid #c3c7d1;border-radius:5px}
+.kv div{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;font-size:12px;gap:8px;border-bottom:1px solid var(--line)}
+.kv div:last-child{border-bottom:0}.kv span:first-child{color:var(--ink2)}
+.kv b{font-weight:600;text-align:right}
+.subh{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;color:var(--ink2);margin-bottom:4px}
+.hist{background:#fff;border:1px solid #c3c7d1;border-radius:5px}
+.hist>div{padding:5px 8px;font-size:11.5px;border-bottom:1px solid var(--line);line-height:1.35}
+.hist>div:last-child{border-bottom:0}
+.hist .l2{display:flex;gap:6px;align-items:center;color:var(--ink2);margin-top:2px}
+.hist .o{color:#6b6f78;text-decoration:line-through}
+.arrow{color:#8a8d95}
+.code{background:#23262d;color:#e8eaf0;border-radius:5px;font-family:var(--mono);font-size:11px;padding:6px 8px;display:flex;gap:6px;align-items:flex-start;line-height:1.4}
+.code span{flex:1;overflow-wrap:anywhere}.code svg{color:#9aa0ad;margin-top:2px;width:12px;height:12px;flex:none}
+.code+.code{margin-top:4px}
+.perm{font-size:11.5px;color:var(--ink2);display:flex;gap:5px;align-items:center;margin-top:5px}
+.perm svg{width:12px;height:12px;flex:none}
+.iempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--ink2);text-align:center;padding:20px}
+.iempty svg{width:28px;height:28px;color:#9a9da6}
+.iempty b{font-size:13px;color:#1d1d1f}
+/* recent changes (in the inspector when nothing is selected) */
+.rc{flex:1;overflow:auto}
+.rci{padding:8px 12px;border-bottom:1px solid #dcdee4;background:#fff}
+.rci{display:grid;grid-template-columns:1fr auto;column-gap:6px}
+.rci .s{font-weight:600}
+.rci .rst{grid-column:2;grid-row:1;align-self:start;margin-top:-2px}
+.rci .v{grid-column:1/span 2}
+.rci .l2{grid-column:1/span 2;flex-wrap:wrap}
+.rci .v{font-size:12px;margin-top:1px}
+.rci .v .o{color:#6b6f78;text-decoration:line-through}
+.rci .l2{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;color:var(--ink2)}
+.rci .l2 .sp{flex:1}
+.rci.fresh{background:#f6f0fd;box-shadow:inset 3px 0 0 #7a3fd1}
+.rcfoot{flex:none;padding:8px 10px;border-top:1px solid #c3c5cc;background:#e3e4e9}
+.rcfoot .btn{width:100%;justify-content:center}
+/* changes list */
+.tool{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.tool .search2{position:relative;flex:1;min-width:0}
+.tool .search2 input{width:100%;height:26px;border:1px solid #c2c4cc;border-radius:6px;padding:0 8px 0 26px;font:inherit;background:#fff;outline:none}
+.tool .search2 svg{position:absolute;left:8px;top:6px;width:14px;height:14px;color:#6b6f78}
+.segf{display:inline-flex;border:1px solid #c3c5cc;border-radius:6px;overflow:hidden;background:#fff;flex:none}
+.segf span{padding:4px 8px;border-left:1px solid #c3c5cc;display:flex;gap:4px;align-items:center;white-space:nowrap;font-size:12px}
+.segf span:first-child{border-left:0}
+.segf span.on{background:#0a64d8;color:#fff}
+.segf span em{font-style:normal;font-size:11px;opacity:.7}
+.cr{display:grid;grid-template-columns:1fr 128px 62px;gap:10px;align-items:center;padding:7px 12px;border-bottom:1px solid #e6e7eb}
+.cr:last-child{border-bottom:0}
+.cr .s b{font-weight:600}
+.cr .s small{color:#6b6f78;font-size:11px;margin-left:4px}
+.cr .c{display:flex;align-items:center;gap:5px;font-size:12px;margin-top:2px;flex-wrap:wrap}
+.cr .c .o{color:#6b6f78;text-decoration:line-through}
+.cr .c svg{width:12px;height:12px;color:#8a8d95}
+.cr .c .nw{font-weight:600}
+.cr .who{display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.cr .who small{color:#6b6f78;font-size:11.5px}
+.cr.isr{background:#fffaf0}
+.cr.sel{box-shadow:inset 0 0 0 2px #0a64d8;background:#f1f7ff}
+.cr.fresh{background:#f6f0fd}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 20px;color:#4a4e57}
+.empty>svg{width:34px;height:34px;color:#8a8d95;margin-bottom:10px}
+.empty h2{font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:4px}
+.empty p{color:#6b6f78;margin-bottom:12px}
+.empty .acts{display:flex;gap:8px}
+/* shortcuts */
+.cmd{display:flex;align-items:center;gap:10px;padding:6px 12px;min-height:38px;border-bottom:1px solid #e6e7eb}
+.cmd:last-child{border-bottom:0}
+.cmd .lab{flex:1;font-weight:500}
+.cmd .lab small{display:block;color:#6b6f78;font-size:12px;font-weight:400}
+.cmd.cap{background:#f1f7ff;box-shadow:inset 3px 0 0 #0a64d8,inset 0 0 0 2px #0a64d8}
+.cmd.ch2{background:#fff5f5;box-shadow:inset 3px 0 0 #d70015;flex-wrap:wrap}
+.conf-box{flex-basis:100%;display:flex;align-items:center;gap:6px;color:#c4001a;padding:2px 0 4px;font-weight:500}
+.conf-box svg{width:14px;height:14px}
+.conf-box .sp{flex:1}
+/* accounts */
+.svc{display:flex;gap:12px;padding:12px;align-items:flex-start;border-bottom:1px solid #e6e7eb}
+.svc:last-child{border-bottom:0}
+.svc.sel{box-shadow:inset 0 0 0 2px #0a64d8;background:#f8fbff}
+.svc .ic{width:32px;height:32px;border-radius:8px;background:#e4e5e9;display:flex;align-items:center;justify-content:center;flex:none}
+.svc .ic svg{width:17px;height:17px;color:#4a4e57}
+.svc .mid{flex:1;min-width:0}
+.svc .nm{font-weight:600}
+.svc .stl{display:flex;align-items:center;gap:5px;margin-top:2px}
+.svc .stl svg{width:14px;height:14px;flex:none}
+.stl.ok{color:#177a3a}.stl.no{color:#6b6f78}.stl.bad{color:#c4001a}
+.svc .acts{display:flex;gap:6px;flex:none}
+.keyform{margin-top:10px;background:#f4f4f7;border:1px solid #d0d2d9;border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.keyform .line{display:flex;gap:6px;align-items:center}
+.keyform .txt{flex:1;width:auto;letter-spacing:.14em}
+.keyform .sv{color:#6b6f78;display:flex;gap:5px;align-items:center;font-size:12px}
+.keyform .sv svg{width:12px;height:12px}
+/* about */
+.abouthead{display:flex;gap:14px;align-items:center;padding:14px 12px}
+.abouthead .ap{width:52px;height:52px;border-radius:12px;background:#1d1d1f;color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.abouthead .ap svg{width:26px;height:26px}
+.abouthead b{font-size:16px}
+/* sheets */
+.scrim{position:absolute;inset:40px 0 0 0;background:rgba(0,0,0,.28);display:flex;justify-content:center;align-items:flex-start;z-index:20}
+.sheet{width:390px;background:#f6f6f8;border:1px solid #b9bcc4;border-top:0;border-radius:0 0 12px 12px;padding:18px 20px;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.sheet h3{font-size:14px;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.sheet h3 svg{width:18px;height:18px;color:#d70015;flex:none}
+.sheet p{color:#4a4e57;margin-bottom:12px}
+.sheet .acts{display:flex;justify-content:flex-end;gap:8px;align-items:center}
+.sheet .acts .sp{flex:1}
+/* save panel */
+.save{width:500px;padding:16px 20px 16px}
+.save .fl{display:grid;grid-template-columns:70px 1fr;gap:8px 10px;align-items:center;margin-bottom:12px}
+.save .fl label{text-align:right;color:#3c3f46}
+.save .fld{height:24px;border:1px solid #c3c5cc;border-radius:5px;background:#fff;padding:0 7px;display:flex;align-items:center;box-shadow:0 0 0 3px rgba(10,100,216,.25);border-color:#0a64d8}
+.save .fld .selt{background:#b4d3fb;border-radius:2px}
+.save .fld2{height:24px;border:1px solid #c3c5cc;border-radius:5px;background:#fff;padding:0 7px;display:flex;align-items:center;color:#9a9da6}
+.save .pop{height:24px;width:220px;border:1px solid #c3c5cc;border-radius:5px;background:#fff;padding:0 6px 0 7px;display:flex;align-items:center;gap:6px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.save .pop svg{width:14px;height:14px;color:#3d7bd9;flex:none}
+.save .pop .cv{margin-left:auto;color:#6b6f78}
+.acc{border-top:1px solid #d3d5db;border-bottom:1px solid #d3d5db;padding:10px 0;margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
+.acc div{display:flex;gap:7px;align-items:flex-start}
+.acc svg{width:14px;height:14px;flex:none;margin-top:1px;color:#4a4e57}
+.acc .k svg{color:#7a5200}
+/* import preview */
+.impsheet{width:560px;padding:16px 20px}
+.impsheet h3 svg{color:#0f7b74}
+.impsheet .from{color:#6b6f78;margin:-2px 0 12px 26px;font-size:12px}
+.ptbl{background:#fff;border:1px solid #c9ccd4;border-radius:6px;overflow:hidden;margin-bottom:10px}
+.ptbl .ph{background:#dcdde3;padding:5px 10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#3c3f46;border-bottom:1px solid #cbcdd4;display:flex;gap:8px}
+.ptbl .ph .sp{flex:1}
+.pr{display:grid;grid-template-columns:200px 1fr;gap:10px;padding:6px 10px;border-bottom:1px solid #e6e7eb;align-items:center}
+.pr:last-child{border-bottom:0}
+.pr small{color:#6b6f78;font-size:11px;display:block}
+.pr .c{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.pr .c .o{color:#6b6f78;text-decoration:line-through}
+.pr .c svg{width:12px;height:12px;color:#8a8d95}
+.pr .c .nw{font-weight:600}
+.pr.skip{background:#fff8ec}
+.pr.skip .c{color:#7a5200;flex-wrap:nowrap}
+.pr.skip .c span{flex:1}
+.pr.skip .c svg{color:#7a5200}
+.notes{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;color:#4a4e57;font-size:12px}
+.notes div{display:flex;gap:6px;align-items:center}
+.notes svg{width:13px;height:13px;flex:none}
+/* main app behind */
+.mainapp{position:absolute;left:90px;top:50px;width:1000px;height:690px;background:#fff;border-radius:10px;border:1px solid #8b909a;box-shadow:0 20px 50px rgba(0,0,0,.3);overflow:hidden}
+.mainapp .tb{height:40px;background:#f6f6f8;border-bottom:1px solid #cfd1d8;display:flex;align-items:center;padding:0 14px}
+.mainapp .tt{position:absolute;left:0;right:0;top:12px;text-align:center;font-weight:600}
+.mainapp .doc{padding:50px 200px}
+.mainapp .doc .ln{height:10px;background:#e3e4e8;border-radius:3px;margin-bottom:14px}
+.mainapp .doc .hd{height:20px;width:50%;background:#c9cbd2;border-radius:3px;margin-bottom:24px}
+</style>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="ident">
+    <div class="badge">Locked 19 Oct 2026</div>
+    <div><div class="nm">Settings window — A with C's inspector and B's recent changes</div><div class="sub">Shared Settings window for every desktop app, 19 October 2026. Keys 1–9 and 0 switch the first ten frames, Q W E R T Y the rest; ← and → step through all.</div></div>
+  </div>
+  <div class="fbar" id="fbar"></div>
+  <div class="stage" id="stage"></div>
+</div>
+
+<script>
+/* ================= data ================= */
+const SHARED=['general','appearance','shortcuts','accounts'];
+const APPS={
+  writeflex:{name:'WriteFlex',cli:'writeflex',icon:'pen-line',version:'0.31.4',build:'2810',
+    sections:['assistant','editor','readingroom','readaloud','sounds','library','diary','saving']},
+  talkweaver:{name:'TalkWeaver',cli:'talkweaver',icon:'presentation',version:'0.41.0',build:'1187',
+    sections:['presenting','publishing','recording']}
+};
+const SEC={
+  general:{n:'General',i:'settings'},
+  appearance:{n:'Appearance',i:'palette'},
+  shortcuts:{n:'Shortcuts',i:'keyboard'},
+  accounts:{n:'Accounts and keys',i:'key-round'},
+  assistant:{n:'Assistant',i:'bot'},
+  editor:{n:'Editor',i:'type'},
+  readingroom:{n:'Reading Room',i:'book-open'},
+  readaloud:{n:'Read aloud',i:'audio-lines'},
+  sounds:{n:'Sounds',i:'volume-2'},
+  library:{n:'Library',i:'library'},
+  diary:{n:'Diary',i:'notebook-pen'},
+  saving:{n:'Saving & history',i:'history'},
+  presenting:{n:'Presenting',i:'presentation'},
+  publishing:{n:'Publishing',i:'send'},
+  recording:{n:'Recording',i:'mic'},
+  changes:{n:'Changes',i:'clipboard-list'},
+  about:{n:'About',i:'info'}
+};
+/* row: k key, l label, h help line, d inspector description, t type, v value, u unit, def default,
+   ch changed, err, dis+why, ag {name,when}, hist [{o,n,who,wn,w,reset}], set example value */
+const PAGES={
+  general:[
+    {h:'Opening',rows:[
+      {k:'integration.browserLinks',l:'Open files from browser links',t:'toggle',v:true,def:'On',d:'Links to local Markdown files in a browser open in WriteFlex instead of downloading.'},
+      {k:'app.launchAtLogin',l:'Launch at login',t:'toggle',v:false,def:'Off',d:'Opens WriteFlex when you log in to this Mac.'},
+      {k:'getStarted.showExample',l:'Show the example on the start screen',t:'toggle',v:false,def:'On',d:'The example workspace on the start screen.'}]},
+    {h:'Updates',rows:[
+      {k:'updates.auto',l:'Check for updates automatically',t:'toggle',v:true,def:'On',d:'Checks once a day and when WriteFlex opens.'},
+      {k:'updates.channel',l:'Update channel',t:'choice',v:'Stable',def:'Stable',d:'Stable gets tested releases. Preview gets alpha builds first.'}]},
+    {h:'Settings file',transfer:true,rows:[]}
+  ],
+  appearance:[
+    {h:'Theme',rows:[
+      {k:'appearance.theme',l:'Appearance',t:'seg',v:'Light',opts:['Light','Dark'],def:'Light',d:'Light is the default. Dark changes the editor, side panels and this window.'}]},
+    {h:'Text',rows:[
+      {k:'appearance.uiSize',l:'Interface text size',h:'Font size of menus and side panels.',t:'choice',v:'Medium',def:'Medium',d:'Font size of menus, side panels and this window. The prose size is set in Editor.'}]},
+    {h:'Action bar',rows:[
+      {k:'actionBar.visible',l:'Show the action bar',t:'toggle',v:true,def:'On',d:'The row of buttons above the editor.'},
+      {k:'actionBar.items',l:'What is on the bar',t:'button',btn:'Configure…',v:'7 buttons',def:'7 buttons',d:'Opens the same sheet as the bar’s own Configure button.'}]}
+  ],
+  assistant:[
+    {h:'Model',rows:[
+      {k:'agent.model',l:'Model',t:'choice',v:'Claude Sonnet 5.5',def:'Claude Sonnet 5.5',d:'The model the WriteFlex assistant uses for new conversations.'},
+      {k:'agent.thinkingLevel',l:'Default reasoning level',t:'choice',v:'Medium',def:'Medium',d:'How long the assistant thinks before answering.'}]},
+    {h:'Agent permissions',rows:[
+      {k:'permissions.proseEdits',l:'Propose prose edits',h:'Always staged as suggestions.',t:'toggle',v:true,def:'On',d:'The assistant may propose edits to your text. You accept or reject each one.'},
+      {k:'permissions.createFiles',l:'Create files',t:'toggle',v:true,def:'On',d:'The assistant may create new files in the Workspace.'},
+      {k:'permissions.renameFiles',l:'Rename and move files',t:'toggle',v:false,def:'Off',d:'The assistant may rename and move files in the Workspace.'},
+      {k:'permissions.readWorkspace',l:'Search and read the Workspace',t:'toggle',v:true,def:'On',d:'The assistant may search and read every file in the Workspace.'}]}
+  ],
+  editor:[
+    {h:'Writing',rows:[
+      {k:'editor.typewriter',l:'Typewriter mode',t:'toggle',v:false,def:'Off',d:'Keeps the line you are typing at one height on screen.'},
+      {k:'editor.fixedLine',l:'Fixed line position',t:'seg',v:'Middle',opts:['Upper','Middle','Lower'],dis:true,why:'Turn on Typewriter mode to set this.',def:'Middle',d:'Where the typing line stays in Typewriter mode.'},
+      {k:'editor.viewMode',l:'View mode',t:'choice',v:'Editor and preview',def:'Editor and preview',d:'What a newly opened document shows.'}]},
+    {h:'Text',rows:[
+      {k:'editor.proseSize',l:'Prose size',h:'Font size of body text.',t:'choice',v:'18 pt',def:'16 pt',ch:true,set:'20',d:'Font size of body text in the editor and the Reading Room.',
+        hist:[{o:'16 pt',n:'18 pt',who:'you',wn:'You',w:'Today 09:12'}]},
+      {k:'editor.lineWidth',l:'Line width',t:'choice',v:'Medium',def:'Medium',d:'Maximum width of a line of prose.'},
+      {k:'editor.spellcheck',l:'Spellcheck',t:'toggle',v:true,def:'On',d:'Underlines misspelt words while you type.'}]},
+    {h:'Reading focus',rows:[
+      {k:'editor.focusMode',l:'Reading focus',t:'choice',v:'Paragraph',def:'Off',ch:true,agBy:'WriteFlex assistant',set:'"sentence"',d:'Dims everything except the paragraph or sentence you are in.',
+        hist:[{o:'Off',n:'Paragraph',who:'ag',wn:'WriteFlex assistant',w:'Yesterday 11:05'}]},
+      {k:'editor.leadStyle',l:'Anchored lead-in style',h:'Bold or italic font for the opening words.',t:'choice',v:'Bold',def:'Bold',d:'How the opening words of each paragraph are marked in Reading focus.'},
+      {k:'editor.rulerOpacity',l:'Ruler opacity',t:'num',v:'40',u:'%',def:'40 %',d:'How strongly the reading ruler shows.'}]}
+  ],
+  readingroom:[
+    {h:'Layout',rows:[
+      {k:'readingRoom.side',l:'Reading Room side',t:'choice',v:'Right',def:'Right',d:'Which side of the editor the Reading Room opens on.'}]}
+  ],
+  readaloud:[
+    {h:'Voice',rows:[
+      {k:'readAloud.voiceURI',l:'Voice',t:'choice',v:'Serena (English, UK)',def:'System voice',ch:false,d:'The voice used to read documents aloud.'},
+      {k:'readAloud.rate',l:'Default speed',t:'num',v:'1.25',u:'×',def:'1.0 ×',ch:true,set:'1.5',d:'Speed at which read aloud starts. You can change it while listening.',
+        hist:[{o:'1.0 ×',n:'1.25 ×',who:'you',wn:'You',w:'Yesterday 16:20'}]},
+      {k:'readAloud.skipPrefix',l:'Skip lines starting with',t:'text',v:'%%',def:'%%',d:'Lines that begin with this text are not read aloud.'}]},
+    {h:'Highlight',rows:[
+      {k:'readAloud.highlight',l:'Highlight the sentence being read',t:'toggle',v:false,def:'On',ch:true,d:'Marks the sentence being read in the editor.',hist:[{o:'On',n:'Off',who:'you',wn:'You',w:'Sat 10 Oct'}]},
+      {k:'readAloud.highlightStrength',l:'Highlight strength',t:'seg',v:'Medium',opts:['Light','Medium','Strong'],dis:true,why:'Turn on the highlight to choose a strength.',def:'Medium',d:'How strong the read-aloud highlight is.'}]},
+    {h:'Playback',rows:[
+      {k:'readAloud.paragraphPause',l:'Pause between paragraphs',t:'num',v:'-5',u:'ms',def:'250 ms',err:'Enter a number from 0 to 2000. Still using 250 ms.',d:'Silence between two paragraphs.'},
+      {k:'readAloud.cacheFolder',l:'Audio cache folder',t:'path',v:'~/Library/Caches/WriteFlex/audio',def:'~/Library/Caches/WriteFlex/audio',d:'Where generated speech is kept so it plays at once next time.'},
+      {k:'shortcut.readAloud',l:'Start or stop read aloud',t:'chord',v:'⌥⌘R',def:'⌥⌘R',d:'The keyboard shortcut. All shortcuts are also in Shortcuts.'},
+      {k:'accounts.speech',l:'Speech service key',t:'secret',def:'None',d:'Key for the online voices. Saved in Keychain, never in the settings file.'}]}
+  ],
+  sounds:[
+    {h:'Typing sounds',rows:[
+      {k:'sounds.typing.enabled',l:'Typing sounds',t:'toggle',v:true,def:'On',d:'Plays a key sound as you type.'},
+      {k:'sounds.typing.scheme',l:'Typing sound scheme',t:'choice',v:'Typewriter',def:'Typewriter',d:'Which key sounds play.'},
+      {k:'sounds.typing.volume',l:'Typing sound volume',t:'num',v:'60',u:'%',def:'60 %',d:'Volume of key sounds.'}]},
+    {h:'Ambient sound',rows:[
+      {k:'sounds.ambient.enabled',l:'Ambient sound',t:'toggle',v:false,def:'Off',d:'Plays a background loop while you write.'},
+      {k:'sounds.ambient.loop',l:'Ambient loop',t:'seg',v:'Rain',opts:['White noise','Rain'],dis:true,why:'Turn on Ambient sound to choose a loop.',def:'Rain',d:'Which loop plays.'}]}
+  ],
+  library:[
+    {h:'Workspace',rows:[
+      {k:'workspace.folder',l:'Workspace folder',t:'path',v:'~/Documents/Writing',def:'None',d:'The folder WriteFlex opens as the Library.'},
+      {k:'workspace.watchExternalChanges',l:'Watch for external changes',t:'toggle',v:true,def:'On',d:'Reloads files changed by other apps.'}]}
+  ],
+  diary:[
+    {h:'Diary',rows:[
+      {k:'diary.folder',l:'Diary folder',t:'path',v:'~/Documents/Writing/Diary',def:'None',d:'The folder that holds diary entries.'}]}
+  ],
+  saving:[
+    {h:'Checkpoints',rows:[
+      {k:'snapshots.frequency',l:'Checkpoint on close',t:'choice',v:'Off',def:'Every close',ch:true,set:'"every-close"',d:'Saves a checkpoint of each document when you close it, so you can go back to it.',
+        hist:[{o:'Every close',n:'Off',who:'ag',wn:'Claude Code',w:'Today 10:38'},{o:'Off',n:'Every close',who:'you',wn:'You',w:'Thu 15 Oct',reset:true},{o:'Every close',n:'Off',who:'you',wn:'You',w:'Mon 12 Oct'}]},
+      {k:'snapshots.retention',l:'Keep history for',t:'choice',v:'30 days',def:'30 days',d:'How long checkpoints are kept.',
+        hist:[{o:'14 days',n:'30 days',who:'app',wn:'Update 0.31.0',w:'Mon 12 Oct'}]}]}
+  ],
+  /* TalkWeaver */
+  presenting:[
+    {h:'Clock',rows:[
+      {k:'clock.amber',l:'Amber warning',h:'Minutes remaining when the clock turns amber.',t:'num',v:'5',u:'min',def:'5 min',set:'4',d:'Minutes remaining when the presenter clock turns amber.'},
+      {k:'clock.darkAmber',l:'Dark-amber warning',h:'Minutes remaining when the clock turns dark amber.',t:'num',v:'1',u:'min',def:'2 min',ch:true,set:'2',d:'Minutes remaining when the presenter clock turns dark amber.',
+        hist:[{o:'2 min',n:'1 min',who:'you',wn:'You',w:'Fri 16 Oct'}]},
+      {k:'presenting.statusWhere',l:'Show where I am in the status bar',t:'toggle',v:true,def:'On',d:'Shows the slide number and section in the status bar.'}]},
+    {h:'Presenter identity and deck defaults',rows:[
+      {k:'presenting.name',l:'Presenter name',t:'text',v:'Dominik Lukeš',def:'None',d:'Shown on title slides and handouts.'},
+      {k:'presenting.backupFolder',l:'Backup folder',t:'path',v:'~/Talks/Backups',def:'None',d:'Where presentation backups are saved.'}]}
+  ],
+  publishing:[
+    {h:'Cloudflare Pages',rows:[
+      {k:'publishing.project',l:'Pages project',t:'text',v:'talks-dl',def:'None',d:'The Cloudflare Pages project talks are published to.'},
+      {k:'publishing.domain',l:'Custom domain',t:'text',v:'talks.dlnet.com',def:'None',d:'Optional domain for published talks.'},
+      {k:'publishing.shortUrls',l:'Short URLs',t:'toggle',v:true,def:'Off',ch:true,d:'Share short links instead of links with the talk name.'}]}
+  ],
+  recording:[
+    {h:'Recording storage',rows:[
+      {k:'recording.endpoint',l:'Endpoint',t:'text',v:'https://r2.example.com',def:'None',d:'S3-compatible storage for recordings.'},
+      {k:'recording.bucket',l:'Bucket',t:'text',v:'talk-recordings',def:'None',d:'Bucket name.'},
+      {k:'accounts.recording',l:'Access keys',t:'secret',def:'None',d:'Saved in Keychain.'},
+      {k:'recording.autoDiscard',l:'Auto-discard under',t:'num',v:'20',u:'s',def:'20 s',d:'Recordings shorter than this are dropped as accidental starts.'}]}
+  ]
+};
+/* change log entries */
+const CH_WF=[
+  {day:'Today',k:'snapshots.frequency',s:'Checkpoint on close',sec:'Saving & history',o:'Every close',n:'Off',w:'10:38',who:'ag',wn:'Claude Code'},
+  {day:'Today',k:'editor.proseSize',s:'Prose size',sec:'Editor',o:'16 pt',n:'18 pt',w:'09:12',who:'you',wn:'You'},
+  {day:'Yesterday',k:'readAloud.rate',s:'Default speed',sec:'Read aloud',o:'1.0 ×',n:'1.25 ×',w:'16:20',who:'you',wn:'You'},
+  {day:'Yesterday',k:'editor.focusMode',s:'Reading focus',sec:'Editor',o:'Off',n:'Paragraph',w:'11:05',who:'ag',wn:'WriteFlex assistant'},
+  {day:'Earlier',k:'snapshots.frequency',s:'Checkpoint on close',sec:'Saving & history',o:'Off',n:'Every close',w:'Thu 15 Oct',who:'you',wn:'You',reset:true},
+  {day:'Earlier',k:'readAloud.highlight',s:'Highlight the sentence being read',sec:'Read aloud',o:'On',n:'Off',w:'Sat 10 Oct',who:'you',wn:'You'},
+  {day:'Earlier',k:'snapshots.retention',s:'Keep history for',sec:'Saving & history',o:'14 days',n:'30 days',w:'Mon 12 Oct',who:'app',wn:'Update 0.31.0'},
+  {day:'Earlier',k:'snapshots.frequency',s:'Checkpoint on close',sec:'Saving & history',o:'Every close',n:'Off',w:'Mon 12 Oct',who:'you',wn:'You'},
+  {day:'Earlier',k:'shortcut.goToHeading',s:'Shortcut: Go to heading',sec:'Shortcuts',o:'⇧⌘G',n:'⇧⌘O',w:'Wed 7 Oct',who:'you',wn:'You'}
+];
+const IMPORT_FILE='WriteFlex Settings 2026-10-17.json';
+const IMPORTED=[
+  {s:'Prose size',sec:'Editor',o:'18 pt',n:'20 pt'},
+  {s:'Line width',sec:'Editor',o:'Medium',n:'Wide'},
+  {s:'Typing sounds',sec:'Sounds',o:'On',n:'Off'},
+  {s:'Keep history for',sec:'Saving & history',o:'30 days',n:'90 days'},
+  {s:'Default reasoning level',sec:'Assistant',o:'Medium',n:'High'},
+  {s:'Shortcut: Typewriter mode',sec:'Shortcuts',o:'⌘T',n:'⌃⌘T'}
+];
+const IMPORT_SKIPPED={s:'Workspace folder',sec:'Library',v:'~/Dropbox/Writing',why:'Not on this Mac. Kept ~/Documents/Writing.'};
+const CH_TW=[
+  {day:'Earlier',k:'clock.darkAmber',s:'Dark-amber warning',sec:'Presenting',o:'2 min',n:'1 min',w:'Fri 16 Oct',who:'you',wn:'You'},
+  {day:'Earlier',k:'publishing.shortUrls',s:'Short URLs',sec:'Publishing',o:'Off',n:'On',w:'Tue 13 Oct',who:'ag',wn:'Claude Code'},
+  {day:'Earlier',k:'clock.amber',s:'Amber warning',sec:'Presenting',o:'3 min',n:'5 min',w:'Mon 5 Oct',who:'app',wn:'Update 0.40.0'}
+];
+const SHORT=[
+  {h:'Writing',rows:[['Typewriter mode','⌘T','editor.typewriter'],['Reading focus','⌃⌘F','editor.focusMode'],['Insert link','⌘K','editor.insertLink']]},
+  {h:'Navigation',rows:[['Open quickly','⌘P'],['Go to heading','⇧⌘O'],['Next document','⌥⌘]']]},
+  {h:'Read aloud',rows:[['Start or stop read aloud','⌥⌘R'],['Skip sentence','⌥⌘→']]}
+];
+
+/* ================= frames ================= */
+const FRAMES=[
+ {k:'1',n:'Window, default',st:{app:'writeflex',sec:'general',focus:true}},
+ {k:'2',n:'Search: font',st:{app:'writeflex',q:'font',sel:'editor.proseSize'}},
+ {k:'3',n:'Search: no results',st:{app:'writeflex',q:'dictionary'}},
+ {k:'4',n:'Every row type',st:{app:'writeflex',sec:'readaloud',sel:'readAloud.rate'}},
+ {k:'5',n:'Agent just changed a row',st:{app:'writeflex',sec:'saving',sel:'snapshots.frequency',live:true}},
+ {k:'6',n:'Changes',st:{app:'writeflex',sec:'changes',selChange:0}},
+ {k:'7',n:'Shortcuts',st:{app:'writeflex',sec:'shortcuts'}},
+ {k:'8',n:'Accounts and keys',st:{app:'writeflex',sec:'accounts'}},
+ {k:'9',n:'About and Reset all',st:{app:'writeflex',sec:'about',dialog:'reset'}},
+ {k:'0',n:'Same window: TalkWeaver',st:{app:'talkweaver',sec:'presenting',sel:'clock.darkAmber'}},
+ {k:'q',n:'App menu: Settings… ⌘,',st:{app:'writeflex',menu:true}},
+ {k:'w',n:'Changes: empty',st:{app:'writeflex',sec:'changes',emptyChanges:true}},
+ {k:'e',n:'Export: save dialog',st:{app:'writeflex',sec:'general',dialog:'export',scrollEnd:true}},
+ {k:'r',n:'Import: preview',st:{app:'writeflex',sec:'general',dialog:'import',scrollEnd:true}},
+ {k:'t',n:'After import: Changes',st:{app:'writeflex',sec:'changes',imported:true}},
+ {k:'y',n:'Import: wrong file',st:{app:'writeflex',sec:'general',dialog:'badfile',scrollEnd:true}}
+];
+let S={frame:0,st:{}};
+
+/* ================= helpers ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const ic=(n,c)=>`<i data-lucide="${n}"${c?` class="${c}"`:''}></i>`;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function hl(text,q){
+  const t=esc(text); if(!q) return t;
+  const i=text.toLowerCase().indexOf(q.toLowerCase()); if(i<0) return t;
+  return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));
+}
+const app=()=>APPS[S.st.app];
+const changes=()=>S.st.app==='talkweaver'?CH_TW:CH_WF;
+function findRow(key){
+  for(const sec in PAGES) for(const c of PAGES[sec]) for(const r of c.rows) if(r.k===key) return {r,sec,card:c.h};
+  return null;
+}
+function liveRow(r){ // frame 5: Claude Code changed the row just now
+  if(S.st.live&&r.k==='snapshots.frequency') return Object.assign({},r,{ag:{name:'Claude Code',when:'just now'}});
+  return r;
+}
+function whoTag(who,wn){
+  const m={ag:['ag','bot'],you:['you','user'],app:['app','package'],imp:['imp','file-down']}[who];
+  return `<span class="tag ${m[0]}">${ic(m[1])}${esc(wn)}</span>`;
+}
+function control(r){
+  switch(r.t){
+    case 'toggle': return `<span class="tg ${r.v?'on':''}" onclick="event.stopPropagation();this.classList.toggle('on')"><i></i></span>`;
+    case 'choice': return `<span class="sel2"><span>${esc(r.v)}</span>${ic('chevrons-up-down')}</span>`;
+    case 'seg': return `<span class="seg">${r.opts.map(o=>`<span class="${o===r.v?'on':''}">${o}</span>`).join('')}</span>`;
+    case 'text': return `<input class="txt" value="${esc(r.v)}">`;
+    case 'num': return `<span class="num ${r.err?'bad':''}"><input value="${esc(r.v)}"><span class="u">${esc(r.u||'')}</span><span class="st">${ic('chevrons-up-down')}</span></span>`;
+    case 'path': return `<span class="path">${ic('folder')}<span>${esc(r.v)}</span></span><button class="btn">Choose…</button>`;
+    case 'chord': return `<span class="kbd">${r.v}</span>`;
+    case 'secret': return `<span class="secv"><b>••••••••</b>${ic('lock')}Saved in Keychain</span><button class="btn">Replace…</button>`;
+    case 'button': return `<span class="secv">${esc(r.v)}</span><button class="btn">${esc(r.btn)}</button>`;
+  }
+}
+function rowHtml(r0,q,selKey){
+  const r=liveRow(r0);
+  const cls=['row']; if(r.ch) cls.push('changed'); if(r.ag) cls.push('agent'); if(r.err) cls.push('err'); if(r.dis) cls.push('dis'); if(r.k===selKey) cls.push('sel');
+  let marks='';
+  if(r.ag) marks=`<span class="tag ag">${ic('bot')}Changed by ${esc(r.ag.name)} ${esc(r.ag.when)}</span>`;
+  else if(r.ch&&r.agBy) marks=`<span class="tag ag">${ic('bot')}Changed by ${esc(r.agBy)}</span>`;
+  else if(r.ch) marks=`<span class="tag chg">Changed</span>`;
+  let help=r.h?`<div class="h">${hl(r.h,q)}</div>`:'';
+  if(r.ch&&!r.ag&&!r.h) help=`<div class="h">Default: ${esc(r.def)}</div>`;
+  if(r.ag) help=`<div class="alink">${ic('arrow-right')}<a>Open this entry in Changes</a><span style="color:#6b6f78">· was ${esc(r.hist[0].o)}</span></div>`;
+  const err=r.err?`<div class="h e">${ic('circle-alert')}${esc(r.err)}</div>`:'';
+  const why=r.dis?`<div class="h d">${ic('lock')}${esc(r.why)}</div>`:'';
+  const reset=r.ch?`<button class="rst">${ic('rotate-ccw')}Reset</button>`:'';
+  return `<div class="${cls.join(' ')}" data-k="${r.k}"><div class="lab"><div class="t">${hl(r.l,q)}${marks}</div>${help}${err}${why}</div><div class="ctl">${reset}${control(r)}</div></div>`;
+}
+function transferCard(){
+  return `<div class="card"><div class="ch">Settings file</div>
+    <div class="row"><div class="lab"><div class="t">Move settings to another Mac</div></div><div class="ctl"><button class="btn">${ic('upload')}Export settings…</button><button class="btn">${ic('download')}Import settings…</button></div></div></div>`;
+}
+function cardsHtml(sec,selKey){
+  return PAGES[sec].map(c=>c.transfer?transferCard():`<div class="card"><div class="ch">${esc(c.h)}</div>${c.rows.map(r=>rowHtml(r,'',selKey)).join('')}</div>`).join('');
+}
+function changedCount(sec){return (PAGES[sec]||[]).reduce((a,c)=>a+c.rows.filter(r=>r.ch).length,0)}
+function searchRows(q){
+  q=q.toLowerCase(); const out={};
+  SHARED.concat(app().sections).forEach(sec=>{
+    (PAGES[sec]||[]).forEach(c=>c.rows.forEach(r=>{
+      const hay=(r.l+' '+(r.h||'')+' '+SEC[sec].n).toLowerCase();
+      if(hay.includes(q)) (out[sec]=out[sec]||[]).push(r);
+    }));
+  });
+  return out;
+}
+
+/* ================= inspector ================= */
+function inspHead(title,icon){return `<h4>${ic(icon)}${title}</h4>`}
+function settingInspector(key){
+  const f=findRow(key); if(!f) return recentPanel();
+  const r=liveRow(f.r); const a=app();
+  const hist=r.hist||[];
+  const hh=hist.length?hist.map((h,i)=>`<div><div>${h.reset?'<span class="tag rs">'+ic('rotate-ccw')+'Reset</span> ':''}<span class="o">${esc(h.o)}</span> <span class="arrow">→</span> <b>${esc(h.n)}</b></div><div class="l2">${whoTag(h.who,h.wn)}<span>${i===0&&r.ag?'just now':esc(h.w)}</span></div></div>`).join('')
+    :`<div style="color:#6b6f78">Never changed</div>`;
+  const cur=r.t==='toggle'?(r.v?'On':'Off'):r.t==='secret'?'Saved in Keychain':r.t==='num'?(r.err?esc(r.def)+' (kept)':esc(r.v)+' '+esc(r.u||'')):esc(r.v);
+  const last=hist[0];
+  const setv=r.set||(r.t==='toggle'?(r.v?'false':'true'):r.t==='num'?r.v:r.t==='path'?'"~/Documents"':r.t==='chord'?'"Alt+Cmd+R"':'"…"');
+  const cmd=r.t==='secret'
+    ?`<div class="perm">${ic('shield-off')}Agents can see whether a key is saved, never its value.</div>`
+    :`<div class="code">${ic('terminal')}<span>${a.cli} settings set ${r.k} ${esc(setv)}</span>${ic('copy')}</div>
+      <div class="code">${ic('terminal')}<span>${a.cli} settings reset ${r.k}</span>${ic('copy')}</div>`;
+  return inspHead('Inspector','panel-right')+`<div class="ib">
+    <div><div class="nm">${esc(r.l)}</div><div class="where">${ic('layout-list')}${esc(SEC[f.sec].n)} › ${esc(f.card)}</div></div>
+    <p>${esc(r.d)}</p>
+    <div class="kv">
+      <div><span>Default</span><b>${esc(r.def)}</b></div>
+      <div><span>Current</span><b>${cur}${r.ch?' <span class="tag chg" style="margin-left:3px">Changed</span>':''}</b></div>
+      <div><span>Changed by</span>${last?whoTag(last.who,last.wn):'<span class="tag none">Never changed</span>'}</div>
+    </div>
+    <div><div class="subh">History of this setting</div><div class="hist">${hh}</div></div>
+    <button class="btn ${r.ch?'':'dis'}" style="align-self:flex-start">${ic('rotate-ccw')}Reset to ${esc(r.def)}</button>
+    <div><div class="subh">Agent command</div>${cmd}</div>
+  </div>`;
+}
+function recentPanel(){
+  const list=changes().slice(0,5);
+  const items=list.map(c=>`<div class="rci"><div class="s">${esc(c.s)}</div><button class="rst">${ic('rotate-ccw')}Reset</button><div class="v">${c.reset?'<span class="tag rs">'+ic('rotate-ccw')+'Reset</span> ':''}<span class="o">${esc(c.o)}</span> <span class="arrow">→</span> ${esc(c.n)}</div>
+    <div class="l2">${whoTag(c.who,c.wn)}<span>${c.day==='Earlier'?esc(c.w):c.day+' '+esc(c.w)}</span></div></div>`).join('');
+  return inspHead('Recent changes','history')+`<div class="rc">${items}</div><div class="rcfoot"><button class="btn">${ic('list')}All changes (${changes().length})</button></div>`;
+}
+function shortcutInspector(){
+  return inspHead('Inspector','panel-right')+`<div class="ib">
+    <div><div class="nm">Insert link</div><div class="where">${ic('layout-list')}Shortcuts › Writing</div></div>
+    <p>Turns the selected text into a link.</p>
+    <div class="kv"><div><span>Default</span><b>⌘K</b></div><div><span>Current</span><b>⌘K</b></div><div><span>Changed by</span><span class="tag none">Never changed</span></div></div>
+    <div><div class="subh">Also shown in</div><div class="kv"><div><span>Menu</span><b>Format › Insert link</b></div><div><span>Command palette</span><b>Yes</b></div></div></div>
+    <button class="btn dis" style="align-self:flex-start">${ic('rotate-ccw')}Reset to ⌘K</button>
+    <div><div class="subh">Agent command</div>
+      <div class="code">${ic('terminal')}<span>writeflex settings set shortcut.insertLink "Cmd+L"</span>${ic('copy')}</div>
+      <div class="code">${ic('terminal')}<span>writeflex settings reset shortcut.insertLink</span>${ic('copy')}</div></div>
+  </div>`;
+}
+function accountInspector(){
+  return inspHead('Inspector','panel-right')+`<div class="ib">
+    <div><div class="nm">Readwise</div><div class="where">${ic('layout-list')}Accounts and keys › Services</div></div>
+    <div class="kv"><div><span>Status</span><b>Not connected</b></div><div><span>Stored in</span><b>Keychain</b></div><div><span>In settings file</span><b>No</b></div></div>
+    <div><div class="subh">Used by</div><div class="kv"><div><span>Library</span><b>Import highlights</b></div><div><span>Reading Room</span><b>Show highlights</b></div></div></div>
+    <div><div class="subh">History</div><div class="hist"><div><div>Key removed</div><div class="l2">${whoTag('you','You')}<span>Tue 6 Oct</span></div></div></div></div>
+    <div><div class="subh">Agent command</div>
+      <div class="code">${ic('terminal')}<span>writeflex settings get accounts.readwise --json</span>${ic('copy')}</div>
+      <div class="perm">${ic('shield-off')}Agents can see whether a key is saved, never its value.</div></div>
+  </div>`;
+}
+function importBatchInspector(){
+  return inspHead('Inspector','panel-right')+`<div class="ib">
+    <div><div class="nm">Import from file</div><div class="where">${ic('file-json')}${esc(IMPORT_FILE)}</div></div>
+    <div class="kv"><div><span>Imported</span><b>Today 10:52</b></div><div><span>Exported from</span><b>MacBook Air</b></div><div><span>Exported on</span><b>Sat 17 Oct 18:04</b></div><div><span>Changed</span><b>6 settings</b></div><div><span>Skipped</span><b>1 setting</b></div></div>
+    <div><div class="subh">Skipped</div><div class="hist"><div><div><b>Workspace folder</b></div><div style="color:#7a5200;margin-top:2px">${esc(IMPORT_SKIPPED.v)} is not on this Mac.</div></div></div></div>
+    <button class="btn" style="align-self:flex-start">${ic('undo-2')}Undo import</button>
+    <div><div class="subh">Agent command</div>
+      <div class="code">${ic('terminal')}<span>writeflex settings import "~/Downloads/${esc(IMPORT_FILE)}"</span>${ic('copy')}</div>
+      <div class="code">${ic('terminal')}<span>writeflex settings undo-import --last</span>${ic('copy')}</div></div>
+  </div>`;
+}
+function inspector(){
+  const st=S.st;
+  if(st.q) return st.sel?settingInspector(st.sel):recentPanel();
+  if(st.sec==='shortcuts') return shortcutInspector();
+  if(st.sec==='accounts') return accountInspector();
+  if(st.sec==='changes'){
+    if(st.emptyChanges) return inspHead('Inspector','panel-right')+`<div class="iempty">${ic('mouse-pointer-click')}<b>No change selected</b></div>`;
+    if(st.imported) return importBatchInspector();
+    return settingInspector(changes()[st.selChange].k);
+  }
+  if(st.sel) return settingInspector(st.sel);
+  return recentPanel();
+}
+
+/* ================= panes ================= */
+function navHtml(){
+  const st=S.st, a=app(), q=st.q||'';
+  const res=q?searchRows(q):null;
+  const item=(sec)=>{
+    const d=SEC[sec]; const sel=!q&&st.sec===sec;
+    let cnt='';
+    if(res){const n=(res[sec]||[]).length; cnt=n?`<span class="cnt">${n}</span>`:'';}
+    const muted=res&&!(res[sec]||[]).length;
+    return `<div class="nav ${sel?'sel':''} ${muted?'muted':''}" data-sec="${sec}">${ic(d.i)}<span class="n">${d.n}</span>${cnt}</div>`;
+  };
+  return `<div class="grp">All apps</div>${SHARED.map(item).join('')}<div class="grp">${a.name}</div>${a.sections.map(item).join('')}`;
+}
+function changesBadge(){
+  const st=S.st;
+  if(st.live) return '<span class="cnt new">1 new</span>';
+  if(st.imported) return '<span class="cnt imp">6 new</span>';
+  if(st.emptyChanges) return '';
+  return `<span class="cnt">${changes().length}</span>`;
+}
+function pane(){
+  const st=S.st;
+  if(st.q) return searchPane(st.q);
+  const sec=st.sec, d=SEC[sec];
+  if(PAGES[sec]){
+    const n=changedCount(sec)+(st.live&&sec==='saving'?0:0);
+    return `<div class="phead">${ic(d.i)}<h1>${d.n}</h1>${n?`<span class="meta">${n} changed from default</span><button class="btn">${ic('rotate-ccw')}Reset section…</button>`:''}</div><div class="pscroll" id="ps">${cardsHtml(sec,st.sel)}</div>`;
+  }
+  if(sec==='changes') return changesPane();
+  if(sec==='shortcuts') return shortcutsPane();
+  if(sec==='accounts') return accountsPane();
+  if(sec==='about') return aboutPane();
+}
+function searchPane(q){
+  const res=searchRows(q), secs=Object.keys(res), total=secs.reduce((a,s)=>a+res[s].length,0);
+  const head=`<div class="phead">${ic('search')}<h1>Results for “${esc(q)}”</h1><span class="meta">${total?`${total} settings in ${secs.length} sections`:'No matches'}</span></div>`;
+  if(!total) return head+`<div class="pscroll"><div class="empty">${ic('search-x')}<h2>No settings match “${esc(q)}”</h2><p>Nothing in the setting names, help lines or section names.</p>
+    <div class="acts"><button class="btn lg">${ic('keyboard')}Search commands in Shortcuts</button><button class="btn lg">${ic('x')}Clear search</button></div></div></div>`;
+  return head+`<div class="pscroll">`+secs.map(sec=>`<div class="card"><div class="ch">${ic(SEC[sec].i)}${SEC[sec].n}<span class="sp"></span><span class="lk">Go to section${ic('arrow-right')}</span></div>${res[sec].map(r=>rowHtml(r,q,S.st.sel)).join('')}</div>`).join('')+`</div>`;
+}
+function changeRow(c,i,cls=''){
+  const when=c.day==='Today'||c.day==='Yesterday'?c.w:c.w;
+  return `<div class="cr ${c.reset?'isr':''} ${cls}">
+    <div class="s"><div><b>${esc(c.s)}</b><small>${esc(c.sec)}</small></div><div class="c">${c.reset?`<span class="tag rs">${ic('rotate-ccw')}Reset</span>`:''}<span class="o">${esc(c.o)}</span>${ic('arrow-right')}<span class="nw">${esc(c.n)}</span></div></div>
+    <div class="who">${whoTag(c.who,c.wn)}<small>${esc(when)}</small></div>
+    <div><button class="rst">${ic('rotate-ccw')}Reset</button></div></div>`;
+}
+function changesPane(){
+  const st=S.st, empty=st.emptyChanges, list=changes();
+  const head=`<div class="phead">${ic('clipboard-list')}<h1>Changes</h1><span class="meta">${empty?'':'Newest first'}</span></div>`;
+  const counts=st.imported
+    ?[['All',15],['You',6],['Agents',2],['App updates',1],['Imports',6]]
+    :[['All',9],['You',6],['Agents',2],['App updates',1]];
+  const filt=`<div class="tool"><div class="search2">${ic('search')}<input placeholder="Filter by setting" ${empty?'disabled':''}></div>
+    <div class="segf" style="${empty?'opacity:.5':''}">${counts.map((c,i)=>`<span class="${i===0?'on':''}">${c[0]}${empty?'':` <em>${c[1]}</em>`}</span>`).join('')}</div></div>`;
+  if(empty) return head+`<div class="pscroll">${filt}<div class="card"><div class="empty">${ic('clipboard-list')}<h2>No changes yet</h2><p>Every setting has its default value.</p></div></div></div>`;
+  let html='';
+  if(st.imported){
+    html+=`<div class="card" style="box-shadow:0 0 0 2px #0f7b74"><div class="ch imp">${ic('file-down')}<span class="fn">Import from ${esc(IMPORT_FILE)}</span><span style="text-transform:none;letter-spacing:0;font-weight:500">· 10:52</span><span class="sp"></span><button class="btn" style="text-transform:none;letter-spacing:0;font-weight:500;color:#1d1d1f">${ic('undo-2')}Undo import</button></div>
+      ${IMPORTED.map(c=>changeRow(Object.assign({who:'imp',wn:'Import',w:'10:52'},c))).join('')}</div>`;
+  }
+  ['Today','Yesterday','Earlier'].forEach(day=>{
+    const rows=list.map((c,i)=>[c,i]).filter(([c])=>c.day===day);
+    if(!rows.length) return;
+    html+=`<div class="card"><div class="ch">${day==='Earlier'?'Earlier in October':day}</div>${rows.map(([c,i])=>changeRow(c,i,(!st.imported&&i===st.selChange)?'sel':'')).join('')}</div>`;
+  });
+  return head+`<div class="pscroll">${filt}${html}</div>`;
+}
+function shortcutsPane(){
+  const head=`<div class="phead">${ic('keyboard')}<h1>Shortcuts</h1><span class="meta">1 changed</span><button class="btn">${ic('rotate-ccw')}Reset all…</button></div>`;
+  const filt=`<div class="tool"><div class="search2">${ic('search')}<input placeholder="Search commands"></div></div>`;
+  const cards=SHORT.map(g=>`<div class="card"><div class="ch">${g.h}</div>${g.rows.map(([n,k])=>{
+    if(n==='Reading focus') return `<div class="cmd ch2"><div class="lab">${n}</div><span class="kbd conf">⌘T</span><div class="conf-box">${ic('circle-alert')}<span>⌘T is used by Typewriter mode.</span><span class="sp"></span><button class="btn">${ic('arrow-left-right')}Swap</button><button class="btn">Replace</button><button class="btn">Cancel</button></div></div>`;
+    if(n==='Insert link') return `<div class="cmd cap"><div class="lab">${n}<small>Default ⌘K</small></div><span class="kbd rec">Press new shortcut…</span><button class="btn">Cancel</button></div>`;
+    if(n==='Go to heading') return `<div class="cmd"><div class="lab" style="display:flex;gap:7px;align-items:center">${n}<span class="tag chg">Changed</span></div><button class="rst">${ic('rotate-ccw')}Reset</button><span class="kbd">${k}</span></div>`;
+    return `<div class="cmd"><div class="lab">${n}</div><span class="kbd">${k}</span></div>`;
+  }).join('')}</div>`).join('');
+  return head+`<div class="pscroll">${filt}${cards}</div>`;
+}
+function accountsPane(){
+  const head=`<div class="phead">${ic('key-round')}<h1>Accounts and keys</h1></div>`;
+  const svc=(icn,nm,state,stline,acts,extra='',sel='')=>`<div class="svc ${sel}"><div class="ic">${ic(icn)}</div><div class="mid"><div class="nm">${nm}</div><div class="stl ${state}">${stline}</div>${extra}</div><div class="acts">${acts}</div></div>`;
+  return head+`<div class="pscroll"><div class="card"><div class="ch">Model provider</div>
+    ${svc('bot','Anthropic','ok',ic('circle-check')+'Signed in · plan subscription',`<button class="btn">Sign out</button>`)}</div>
+    <div class="card"><div class="ch">Services</div>
+    ${svc('book-marked','Readwise','no',ic('circle-dashed')+'Not connected',``,
+      `<div class="keyform"><div class="line"><input class="txt" value="••••••••••••••••••"><button class="btn pri">Add key</button><button class="btn">Cancel</button></div><div class="sv">${ic('lock')}Saved in Keychain. The key is not shown again.</div></div>`,'sel')}
+    ${svc('audio-lines','Speech service','bad',ic('circle-x')+'Key rejected by the service.',`<button class="btn pri">${ic('refresh-cw')}Replace key…</button><button class="btn dng">${ic('trash-2')}Remove</button>`)}
+    </div></div>`;
+}
+function aboutPane(){
+  const a=app();
+  const head=`<div class="phead">${ic('info')}<h1>About</h1></div>`;
+  return head+`<div class="pscroll"><div class="card"><div class="ch">Version</div>
+    <div class="abouthead"><div class="ap">${ic(a.icon)}</div><div style="flex:1"><b>${a.name}</b><div style="color:#6b6f78;margin-top:2px">Version ${a.version} (build ${a.build})</div></div><button class="btn">${ic('copy')}Copy version</button></div></div>
+    <div class="card"><div class="ch">Updates</div>
+    <div class="row"><div class="lab"><div class="t" style="color:#177a3a">${ic('circle-check')}${a.name} is up to date</div><div class="h">Last checked today at 09:41.</div></div><div class="ctl"><button class="btn">${ic('refresh-cw')}Check for updates</button></div></div></div>
+    <div class="card"><div class="ch">Reset</div>
+    <div class="row"><div class="lab"><div class="t">Reset all settings</div><div class="h">5 settings and 1 shortcut differ from their defaults.</div></div><div class="ctl"><button class="btn dng">${ic('rotate-ccw')}Reset all settings…</button></div></div></div></div>`;
+}
+
+/* ================= sheets ================= */
+function dialog(kind){
+  if(kind==='reset') return `<div class="scrim"><div class="sheet"><h3>${ic('triangle-alert')}Reset all settings?</h3>
+    <p>5 settings and 1 shortcut return to their defaults. Each reset is listed in Changes and can be undone there.</p>
+    <div class="acts"><button class="btn lg">Cancel</button><button class="btn lg dngp">Reset 6 settings</button></div></div></div>`;
+  if(kind==='export') return `<div class="scrim"><div class="sheet save">
+    <div class="fl"><label>Save As:</label><div class="fld"><span class="selt">WriteFlex Settings 2026-10-19</span>.json</div>
+      <label>Tags:</label><div class="fld2"></div>
+      <label>Where:</label><div class="pop">${ic('folder')}Documents<span class="cv">${ic('chevrons-up-down')}</span></div></div>
+    <div class="acc"><div>${ic('file-json')}<span>Includes 5 settings changed from default and 1 shortcut.</span></div>
+      <div class="k">${ic('key-round')}<span>Account keys are not exported. They stay in Keychain on this Mac.</span></div></div>
+    <div class="acts"><button class="btn lg">Cancel</button><button class="btn lg pri">Save</button></div></div></div>`;
+  if(kind==='import'){
+    const rows=IMPORTED.map(c=>`<div class="pr"><div>${esc(c.s)}<small>${esc(c.sec)}</small></div><div class="c"><span class="o">${esc(c.o)}</span>${ic('arrow-right')}<span class="nw">${esc(c.n)}</span></div></div>`).join('');
+    const sk=`<div class="pr skip"><div>${esc(IMPORT_SKIPPED.s)}<small>${esc(IMPORT_SKIPPED.sec)}</small></div><div class="c">${ic('circle-alert')}<span>${esc(IMPORT_SKIPPED.v)} is not on this Mac. Skipped.</span></div></div>`;
+    return `<div class="scrim"><div class="sheet impsheet"><h3>${ic('file-down')}Import settings from “${esc(IMPORT_FILE)}”?</h3>
+      <div class="from">Exported from MacBook Air on Sat 17 Oct 2026 at 18:04 · WriteFlex 0.31.2</div>
+      <div class="ptbl"><div class="ph"><span>6 settings will change</span><span class="sp"></span><span>This Mac → file</span></div>${rows}${sk}</div>
+      <div class="notes"><div>${ic('circle-check')}11 other settings in the file already match this Mac.</div><div>${ic('key-round')}Account keys are not in the file. Keys on this Mac stay as they are.</div></div>
+      <div class="acts"><span class="sp"></span><button class="btn lg">Cancel</button><button class="btn lg pri">Import 6 settings</button></div></div></div>`;
+  }
+  if(kind==='badfile') return `<div class="scrim"><div class="sheet"><h3>${ic('triangle-alert')}This file holds TalkWeaver settings</h3>
+    <p>“TalkWeaver Settings 2026-10-12.json” cannot be imported into WriteFlex. Choose a WriteFlex settings file.</p>
+    <div class="acts"><button class="btn lg">Cancel</button><button class="btn lg pri">Choose another file…</button></div></div></div>`;
+  return '';
+}
+function menubar(name,open){
+  return `<div class="menubar"><span class="m ap ${open?'open':''}">${name}</span><span class="m">File</span><span class="m">Edit</span><span class="m">Format</span><span class="m">View</span><span class="m">Window</span><span class="m">Help</span><span class="sp"></span><span class="m">Mon 19 Oct 10:52</span></div>`;
+}
+function appMenu(name){
+  return `<div class="appmenu"><div>About ${name}</div><hr><div class="hl"><span>Settings…</span><span>⌘,</span></div><div><span>Export Settings…</span><span></span></div><div><span>Import Settings…</span><span></span></div><hr><div class="dim"><span>Services</span><span>›</span></div><hr><div><span>Hide ${name}</span><span>⌘H</span></div><div><span>Hide Others</span><span>⌥⌘H</span></div><div class="dim"><span>Show All</span><span></span></div><hr><div><span>Quit ${name}</span><span>⌘Q</span></div></div>`;
+}
+function mainApp(name){
+  return `<div class="mainapp"><div class="tb"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Chapter 3 draft — ${name}</div></div><div class="doc"><div class="hd"></div>${Array.from({length:18},(_,i)=>`<div class="ln" style="width:${i%5===4?'60%':'100%'}"></div>`).join('')}</div></div>`;
+}
+
+/* ================= render ================= */
+function render(){
+  const f=FRAMES[S.frame]; S.st=Object.assign({},f.st); const st=S.st, a=app();
+  document.querySelectorAll('#fbar button').forEach((b,i)=>b.classList.toggle('on',i===S.frame));
+  const stage=$('#stage');
+  if(st.menu){ stage.innerHTML=menubar(a.name,true)+appMenu(a.name)+mainApp(a.name); lucide.createIcons(); return; }
+  stage.innerHTML=menubar(a.name,false)+`<div class="win">
+    <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Settings</div></div>
+    <div class="body">
+      <div class="side">
+        <div class="search ${st.q?'has':''}">${ic('search','si')}<input id="q" placeholder="Search settings" value="${esc(st.q||'')}" class="${st.q||st.focus?'f':''}">${ic('circle-x','cl')}</div>
+        <div class="navwrap" id="nav"></div>
+        <div class="sidefoot">
+          <div class="nav" data-sec="changes">${ic('clipboard-list')}<span class="n">Changes</span><span id="cb"></span></div>
+          <div class="nav" data-sec="about">${ic('info')}<span class="n">About</span></div>
+        </div>
+      </div>
+      <div class="pane" id="pane"></div>
+      <div class="insp" id="insp"></div>
+    </div>${st.dialog?dialog(st.dialog):''}</div>`;
+  refresh();
+}
+function refresh(){
+  const st=S.st;
+  $('#nav').innerHTML=navHtml(); $('#pane').innerHTML=pane(); $('#insp').innerHTML=inspector();
+  $('#cb').outerHTML=`<span id="cb">${changesBadge()}</span>`;
+  $('.search').classList.toggle('has',!!st.q);
+  document.querySelectorAll('.sidefoot .nav').forEach(n=>n.classList.toggle('sel',!st.q&&st.sec===n.dataset.sec));
+  wire(); lucide.createIcons();
+  const ps=$('#ps'); if(ps&&st.scrollEnd) ps.scrollTop=ps.scrollHeight;
+}
+function wire(){
+  document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>{Object.assign(S.st,{q:'',sec:n.dataset.sec,sel:null,dialog:null,live:false,selChange:0});refresh();});
+  document.querySelectorAll('.row[data-k]').forEach(r=>r.onclick=()=>{S.st.sel=(S.st.sel===r.dataset.k)?null:r.dataset.k;refresh();});
+  const q=$('#q'); if(!q) return;
+  q.oninput=()=>{S.st.q=q.value;S.st.sel=null;refresh();const n=$('#q');n.focus();n.setSelectionRange(n.value.length,n.value.length);};
+  const cl=$('.search .cl'); if(cl) cl.onclick=()=>{S.st.q='';S.st.sec=S.st.sec||'general';refresh();};
+}
+/* boot */
+FRAMES.forEach((f,i)=>{const b=document.createElement('button');b.innerHTML=`<b>${f.k.toUpperCase()}</b>${f.n}`;b.onclick=()=>{S.frame=i;render()};$('#fbar').appendChild(b);});
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.metaKey||e.ctrlKey||e.altKey) return;
+  if(e.key==='ArrowRight'){S.frame=(S.frame+1)%FRAMES.length;render();return;}
+  if(e.key==='ArrowLeft'){S.frame=(S.frame+FRAMES.length-1)%FRAMES.length;render();return;}
+  const i=FRAMES.findIndex(f=>f.k===e.key.toLowerCase()); if(i>=0){S.frame=i;render();}
+});
+const h=parseInt((location.hash||'').slice(1));
+S.frame=(h>=1&&h<=FRAMES.length)?h-1:0;
+render();
+window.__frames=FRAMES.length;
+window.__go=(i)=>{S.frame=i;render()};
+</script>
+</body>
+</html>

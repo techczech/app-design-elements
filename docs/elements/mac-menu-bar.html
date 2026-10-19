@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mac menu bar - App design elements</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<nav class="side" aria-label="Site">
+<div class="brand">App design elements</div>
+<a href="../index.html">Home</a>
+<div class="nav-h">Elements</div>
+<a href="../elements/list-of-all-commands.html"><span class="n">1</span> List of all commands</a>
+<a href="../elements/command-palette.html"><span class="n">2</span> Command palette ⌘⇧P</a>
+<a href="../elements/keyboard-shortcuts-every-app-keeps-the-same.html"><span class="n">3</span> Keyboard shortcuts every app keeps the same</a>
+<a href="../elements/a-key-for-every-button-and-keys-you-can-change.html"><span class="n">4</span> A key for every button, and keys you can change</a>
+<a href="../elements/shortcut-cheat-sheet.html"><span class="n">5</span> Shortcut cheat sheet ⌘/</a>
+<a href="../elements/mac-menu-bar.html" aria-current="page"><span class="n">6</span> Mac menu bar</a>
+<a href="../elements/actions-for-what-you-have-selected.html"><span class="n">7</span> Actions for what you have selected ⌘K</a>
+<a href="../elements/switcher-and-preview-panel.html"><span class="n">8</span> Switcher ⌘⇧K and preview panel ⌘P</a>
+<a href="../elements/find-and-search.html"><span class="n">9</span> Find and search</a>
+<a href="../settings.html"><span class="n">10</span> Settings window</a>
+<a class="sub" href="../settings-history.html">Settings history</a>
+<a href="../elements/your-agent-can-use-the-app.html"><span class="n">11</span> Your agent can use the app</a>
+<a href="../elements/getting-started.html"><span class="n">12</span> Getting started</a>
+<a href="../elements/help-where-you-are.html"><span class="n">13</span> Help where you are</a>
+<a href="../elements/layout-and-look.html"><span class="n">14</span> Layout and look</a>
+<a href="../elements/empty-loading-and-error-screens.html"><span class="n">15</span> Empty, loading and error screens</a>
+<a href="../elements/plain-wording.html"><span class="n">16</span> Plain wording</a>
+<div class="nav-h">More</div>
+<a href="../use-with-your-agent.html">Use with your agent</a>
+<a href="../skill.html">Read the skill</a>
+</nav>
+<main class="">
+<h1>6. Mac menu bar</h1>
+<p class="rule">Built from the same list of commands, with the current shortcut beside each item, in the same order in every app: the app's own menu (with Settings…), Edit, View, the app's menus, Window and Help.</p>
+<h2 class="detail">The rule in detail</h2>
+<h2>macOS menu bar</h2>
+<ul><li>Generated from the registry. Every command except small repeat/movement keys marked <code>noMenu</code> with a reason.</li><li>Menu items display the effective chord (overrides included); rebuild on rebind; display-only accelerators so dispatch stays with the registry.</li><li>Fixed frame: <strong>App</strong> (About, Settings… <code>⌘,</code>, Quit) · <strong>Edit</strong> (standard roles) · <strong>View</strong> · app menus named by task · <strong>Window</strong> · <strong>Help</strong> (cheat sheet <code>⌘/</code>, Get started, How this app works).</li><li>Unavailable commands appear disabled, not missing.</li><li>Swift: same rule through <code>.commands</code> generated from the command table.</li></ul>
+<p class="note">Related elements from the same reference: <a href="list-of-all-commands.html">List of all commands</a>, <a href="command-palette.html">Command palette ⌘⇧P</a>, <a href="keyboard-shortcuts-every-app-keeps-the-same.html">Keyboard shortcuts every app keeps the same</a>, <a href="a-key-for-every-button-and-keys-you-can-change.html">A key for every button, and keys you can change</a>, <a href="shortcut-cheat-sheet.html">Shortcut cheat sheet ⌘/</a>, <a href="actions-for-what-you-have-selected.html">Actions for what you have selected ⌘K</a>, <a href="switcher-and-preview-panel.html">Switcher ⌘⇧K and preview panel ⌘P</a>, <a href="find-and-search.html">Find and search</a>.</p>
+</main>
+</body>
+</html>
