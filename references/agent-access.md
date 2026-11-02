@@ -7,7 +7,7 @@ If the app can do it with content, the agent can do it. An app feature operating
 - Every content operation is a **typed, headless verb**: one implementation, the UI is one caller, the agent another.
 - The command registry classifies every command: content / view / settings / chrome. Every content command maps to a verb, enforced by the app's own tests. Chrome exclusions carry a declared reason (`ui-navigation`, `presentation`, `duplicate-of`).
 - **Posture floor per verb:** reversible → direct, recorded, undoable; substantive rewrite → proposal (diff, accept/reject); destructive or externally irreversible → approval plus an execution journal. The request's intent may raise the gate ("suggest…" returns a proposal), never lower it.
-- Every feature design includes a verb table: verb, typed inputs, posture floor, context contribution. An agent journey is written only when the agent is a primary user of the feature.
+- Every feature design includes a verb table: verb, typed inputs, posture floor, context contribution, what the skill will say. An agent journey is written only when the agent is a primary user of the feature.
 
 ## Settings
 
@@ -17,3 +17,5 @@ If the app can do it with content, the agent can do it. An app feature operating
 ## Discoverability
 
 The agent's operation list is generated from the registry and the verb inventory, like the palette, so an agent can discover what the app can do without reading its code.
+
+Agents meet that list through the skill the app ships and connects itself: `references/agent-skill.md`.

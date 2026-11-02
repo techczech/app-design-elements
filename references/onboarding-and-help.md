@@ -5,6 +5,7 @@
 - **Get started button lifecycle:** a Get started button in the title bar, left of search, opens the Get started page. Once the example project has been opened it becomes **Remove example**. Removing the example removes the button for good; a Hide option covers someone who never opens it. Afterwards Get started is reached from Settings (with "Show the button again"), the palette and the Help menu.
 - **Example project** teaches commands as **task chapters** (what you want to do, then the keys), with a count of which chapters have been tried.
 - **How this app works:** a section explaining what makes the app different — how its files and folders work, how its agents work, features that are hard to discover, and integrations it depends on. Literal statements of fact, never slogans.
+- **Give your agents skills to use the app:** an app with a CLI offers one onboarding step installing its skill for the agents it finds (`references/agent-skill.md`); skipped when none are found, and always in Settings afterwards.
 - Nothing about onboarding lives permanently on a dashboard, in a status bar or inside content.
 
 ## Help after onboarding

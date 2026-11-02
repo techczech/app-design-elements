@@ -1,5 +1,15 @@
 # Layout, visual, states and wording (elements 14–16)
 
+## Rule one: protect the vertical space
+
+The owner's first rule, set 2026-11-02 after repeated failures: vertical space is the scarcest thing on a screen, and the content is what earns it.
+
+- **At most two bars at the top of any window, ever:** title or tab bar plus one toolbar. A third row of tabs, filters, breadcrumbs, banners or status lines is a defect, not a layout choice.
+- **Before adding a row, combine or move:** put filters, scope and view switches into the one toolbar (segmented control, popover, menu), status into the status bar or the sidebar, explanations into `⌘K` help, rare actions into a menu. A new control finds a place in an existing bar or it does not ship.
+- **No stacked notices:** one notice slot, collapsible, never pushing content down permanently; a state that persists is shown in place (a badge, a mark in the sidebar), not as a banner.
+- **No resident explainer lines** above content. A sentence that has to stay on screen to make the screen usable means the screen is wrong.
+- **Count it in every review:** each screen contract and each mockup states the rows above the content and the height they take; more than two fails review.
+
 ## Layout
 
 - **Application, not website:** panels, splitters, toolbars, panel-local scrolling, tool density. No hero sections or page rhythm.

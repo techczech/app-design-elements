@@ -1,0 +1,96 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>Connect your agents: mockup</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#e4e5e9;color:#1d1d1f;font:13px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.page{width:1000px;margin:0 auto;padding:20px 0 30px}
+h1.pt{font-size:20px;margin-bottom:4px}.pt-sub{color:#555a63;margin-bottom:18px}
+.frame{margin-bottom:34px}
+body:has(.frame:target) .frame:not(:target),body:has(.frame:target) .pt,body:has(.frame:target) .pt-sub{display:none}
+.flabel{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.flabel b{background:#1d1d1f;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px}
+.flabel span{font-weight:600;font-size:14px}.flabel i{color:#6b6f78;font-style:normal}
+.stage{position:relative;width:1000px;height:620px;background:#a7adb8;border-radius:6px;overflow:hidden}
+.win{position:absolute;background:#ececf0;border-radius:10px;border:1px solid #8b909a;box-shadow:0 20px 50px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-direction:column}
+.titlebar{height:40px;flex:none;background:#f6f6f8;border-bottom:1px solid #cfd1d8;display:flex;align-items:center;padding:0 14px;position:relative}
+.lights{display:flex;gap:8px}.lights i{width:12px;height:12px;border-radius:50%;display:block}
+.lights i:nth-child(1){background:#ff5f57}.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+.titlebar .tt{position:absolute;left:0;right:0;text-align:center;font-weight:600}
+.body{flex:1;display:flex;min-height:0}
+.side{width:210px;flex:none;background:#e3e3e8;border-right:1px solid #cbcdd4;padding:10px 8px}
+.grp{font-size:11px;font-weight:600;color:#6b6f78;text-transform:uppercase;letter-spacing:.04em;padding:9px 8px 4px}
+.nav{display:flex;align-items:center;height:28px;padding:0 8px;border-radius:6px;margin-bottom:1px}
+.nav.sel{background:#0a64d8;color:#fff}
+.pane{flex:1;display:flex;flex-direction:column;min-width:0}
+.phead{height:46px;flex:none;background:#f8f8fa;border-bottom:1px solid #cfd1d8;display:flex;align-items:center;padding:0 14px}
+.phead h1{font-size:16px;font-weight:600}
+.pscroll{flex:1;overflow:hidden;padding:14px}
+.card{background:#fff;border:1px solid #d0d2d9;border-radius:8px;margin-bottom:14px;overflow:hidden}
+.card>.ch{background:#dcdde3;padding:6px 12px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#3c3f46;border-bottom:1px solid #cbcdd4}
+.row{display:flex;align-items:center;gap:12px;padding:8px 12px;min-height:46px;border-bottom:1px solid #e6e7eb}
+.row:last-child{border-bottom:0}
+.row .lab{flex:1}.row .t{font-weight:500;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.row .h{color:#6b6f78;font-size:12px;margin-top:1px}
+.row .ctl{display:flex;gap:6px;align-items:center}
+.tag{font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.tag.ok{background:#d6efdf;color:#146c35}.tag.no{background:#e8eaee;color:#4a4e57}.tag.rs{background:#fdecc8;color:#7a5200}
+.btn{height:24px;border:1px solid #c3c5cc;background:#fff;border-radius:5px;padding:0 9px;display:inline-flex;align-items:center;white-space:nowrap;box-shadow:0 1px 0 rgba(0,0,0,.06);font:inherit;color:inherit}
+.btn.pri{background:#0a64d8;border-color:#0a54b8;color:#fff}.btn.lg{height:30px;padding:0 16px}
+.empty{padding:26px 20px;text-align:center;color:#3c3f46}.empty .h{color:#6b6f78;margin-top:4px}
+.dim{position:absolute;inset:0;background:rgba(40,44,52,.28)}
+.ob{left:190px;top:8px;width:620px;height:606px;background:#fff}
+.ob .main{flex:1;padding:12px 34px;overflow:hidden}
+.steps{display:flex;gap:6px;justify-content:center;padding:12px 0 0}.steps i{width:22px;height:4px;border-radius:2px;background:#d3d6dc}.steps i.on{background:#0a64d8}
+.ob h2{font-size:22px;font-weight:700;margin:2px 0 6px}
+.ob p.lead{font-size:14px;color:#2a2d33;margin-bottom:10px}
+.alist{border:1px solid #d0d2d9;border-radius:8px;margin-bottom:10px}
+.ag{display:flex;align-items:center;gap:10px;padding:5px 12px;border-bottom:1px solid #e6e7eb}.ag:last-child{border-bottom:0}
+.cb{width:16px;height:16px;border-radius:4px;border:1px solid #9a9ea8;background:#fff;flex:none;position:relative}
+.cb.on{background:#0a64d8;border-color:#0a54b8}.cb.on::after{content:"";position:absolute;left:4.5px;top:1.5px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ag .nm{font-weight:600}.ag .sm{color:#6b6f78;font-size:12px}
+.ag.along{background:#f6f6f8;color:#3c3f46}.ag.along .dot{width:16px;text-align:center;color:#6b6f78}
+.disc{margin:8px 0;font-size:13px}.disc .sum{color:#0a64d8}
+.disc .box{margin-top:8px;background:#f6f6f8;border:1px solid #dcdee3;border-radius:6px;padding:10px 12px;color:#2a2d33;font-size:12.5px}
+.disc .box ul{margin:4px 0 8px 18px}.disc .box code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#e9eaee;padding:0 4px;border-radius:3px}
+.obfoot{display:flex;justify-content:flex-end;gap:8px;padding:12px 34px 18px}
+.try{border:1px solid #cfe0f7;background:#f1f7ff;border-radius:8px;padding:12px 14px;font-size:14px;margin:12px 0}
+.try small{display:block;color:#6b6f78;font-size:12px;margin-bottom:4px}
+.big{font-size:34px;color:#1f9d4d}
+.sbar{position:absolute;left:0;right:0;bottom:0;height:26px;background:#e3e3e8;border-top:1px solid #cbcdd4;display:flex;align-items:center;padding:0 12px;gap:14px;color:#6b6f78;font-size:12px;z-index:5}
+.sbar .sp{flex:1}
+.pop{position:absolute;right:12px;bottom:34px;width:340px;background:#fff;border:1px solid #b9bcc4;border-radius:8px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:6}
+.pop::after{content:"";position:absolute;right:130px;bottom:-6px;width:10px;height:10px;background:#fff;border-right:1px solid #b9bcc4;border-bottom:1px solid #b9bcc4;transform:rotate(45deg)}
+.pop .b{display:flex;gap:8px;margin-top:10px}
+.mark{color:#0a54b8;font-weight:600}
+.deck{position:absolute;left:0;right:0;top:40px;bottom:26px;display:flex}
+.slides{width:150px;background:#e3e3e8;border-right:1px solid #cbcdd4;padding:10px}.slides i{display:block;height:64px;background:#fff;border:1px solid #c3c5cc;margin-bottom:8px;border-radius:3px}
+.canvas{flex:1;display:flex;align-items:center;justify-content:center;background:#ececf0}.canvas i{width:520px;height:292px;background:#fff;border:1px solid #c3c5cc}
+</style></head><body><div class="page"><h1 class="pt">Connect your agents</h1><div class="pt-sub">Candidate mockup, 30 October 2026. Seven frames, light theme.</div><section class="frame" id="f1"><div class="flabel"><b>Frame 1</b><span>Onboarding step, three agents found</span><i>TalkWeaver, details closed</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="dim"></div><div class="win ob"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Welcome to TalkWeaver</div></div>
+<div class="steps"><i></i><i></i><i class="on"></i><i></i></div>
+<div class="main"><h2>Give your agents skills to use TalkWeaver</h2><p class="lead">This will install a skill that tells your agent how to do things with TalkWeaver. You will be able to ask your agent to create and edit your presentations.</p><div class="alist"><div class="ag"><span class="cb on"></span><div><div class="nm">Claude Code</div><div class="sm">Found on this computer</div></div></div><div class="ag"><span class="cb on"></span><div><div class="nm">Codex</div><div class="sm">Found on this computer</div></div></div><div class="ag"><span class="cb on"></span><div><div class="nm">Antigravity</div><div class="sm">Found on this computer</div></div></div><div class="ag along"><span class="dot">+</span><div><b>T3 Code</b> uses Claude Code and Codex, so it comes along with them.</div></div></div>
+<div class="disc"><div class="sum">▸ What this does</div></div></div>
+<div class="obfoot"><button class="btn lg">Not now</button><button class="btn lg pri">Install skill</button></div></div></div></section><section class="frame" id="f2"><div class="flabel"><b>Frame 2</b><span>Same step, “What this does” open</span><i>names what is written and the command-line tool</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="dim"></div><div class="win ob"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Welcome to TalkWeaver</div></div>
+<div class="steps"><i></i><i></i><i class="on"></i><i></i></div>
+<div class="main"><h2>Give your agents skills to use TalkWeaver</h2><p class="lead">This will install a skill that tells your agent how to do things with TalkWeaver. You will be able to ask your agent to create and edit your presentations.</p><div class="alist"><div class="ag"><span class="cb on"></span><div><div class="nm">Claude Code</div><div class="sm">Found on this computer</div></div></div><div class="ag"><span class="cb on"></span><div><div class="nm">Codex</div><div class="sm">Found on this computer</div></div></div><div class="ag"><span class="cb on"></span><div><div class="nm">Antigravity</div><div class="sm">Found on this computer</div></div></div><div class="ag along"><span class="dot">+</span><div><b>T3 Code</b> uses Claude Code and Codex, so it comes along with them.</div></div></div>
+<div class="disc"><div class="sum">▾ What this does</div><div class="box">TalkWeaver adds a small set of instructions for each agent you tick, so the agent knows how to use TalkWeaver. It writes these folders and nothing else:
+<ul><li><code>~/.claude/skills/talkweaver</code> for Claude Code</li><li><code>~/.agents/skills/talkweaver</code> for Codex</li><li><code>~/.gemini/antigravity/skills/talkweaver</code> for Antigravity</li></ul>
+It also adds a command-line tool, <code>talkweaver</code>, which the agents run to work on your presentations. T3 Code uses the Claude Code and Codex copies.<br>
+Connected copies are updated with each TalkWeaver update. You can remove them at any time in Settings, under Agents.</div></div></div>
+<div class="obfoot"><button class="btn lg">Not now</button><button class="btn lg pri">Install skill</button></div></div></div></section><section class="frame" id="f3"><div class="flabel"><b>Frame 3</b><span>Finished state of the step</span><i>connected agents, a sentence to try, Done</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="dim"></div><div class="win ob"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Welcome to TalkWeaver</div></div><div class="steps"><i></i><i></i><i class="on"></i><i></i></div>
+<div class="main"><div class="big">✓</div><h2>Your agents are connected</h2><p class="lead">These agents can now work with TalkWeaver:</p>
+<div class="alist"><div class="ag"><span class="tag ok">Connected</span><div class="nm">Claude Code</div></div><div class="ag"><span class="tag ok">Connected</span><div class="nm">Codex</div></div><div class="ag"><span class="tag ok">Connected</span><div class="nm">Antigravity</div></div></div>
+<div class="try"><small>Try this in one of your agents</small>“Ask Codex to make a ten-slide talk on how bees find flowers.”</div>
+<p style="color:#6b6f78;font-size:12px">You can disconnect an agent at any time in Settings, under Agents.</p></div>
+<div class="obfoot"><button class="btn lg pri">Done</button></div></div></div></section><section class="frame" id="f4"><div class="flabel"><b>Frame 4</b><span>WriteFlex variant, one agent found</span><i>only the wording changes</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled document</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="dim"></div><div class="win ob"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Welcome to WriteFlex</div></div>
+<div class="steps"><i></i><i></i><i class="on"></i><i></i></div>
+<div class="main"><h2>Give your agents skills to use WriteFlex</h2><p class="lead">This will install a skill that tells your agent how to do things with WriteFlex. You will be able to ask your agent to draft, edit and review your documents.</p><div class="alist"><div class="ag"><span class="cb on"></span><div><div class="nm">Codex</div><div class="sm">Found on this computer</div></div></div></div>
+<div class="disc"><div class="sum">▸ What this does</div></div></div>
+<div class="obfoot"><button class="btn lg">Not now</button><button class="btn lg pri">Install skill</button></div></div></div></section><section class="frame" id="f5"><div class="flabel"><b>Frame 5</b><span>Settings card</span><i>TalkWeaver, Settings window</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="win" style="left:70px;top:24px;width:860px;height:512px"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Settings</div></div><div class="body">
+<div class="side"><div class="grp">General</div><div class="nav">Appearance</div><div class="nav">Editing</div><div class="grp">Connections</div><div class="nav sel">Agents</div><div class="nav">Updates</div></div>
+<div class="pane"><div class="phead"><h1>Agents</h1></div><div class="pscroll"><div class="card"><div class="ch">Give your agents skills to use TalkWeaver</div>
+<div class="row"><div class="lab"><div class="t">Claude Code <span class="tag ok">Connected</span></div><div class="h">Version 0.42.0</div></div><div class="ctl"><button class="btn ">Remove</button></div></div>
+<div class="row"><div class="lab"><div class="t">Codex <span class="tag ok">Connected</span></div><div class="h">Version 0.42.0</div></div><div class="ctl"><button class="btn ">Remove</button></div></div>
+<div class="row"><div class="lab"><div class="t">Antigravity <span class="tag no">Not connected</span></div><div class="h">Found on this computer</div></div><div class="ctl"><button class="btn pri">Install skill</button></div></div>
+<div class="row"><div class="lab"><div class="t">Gemini CLI <span class="tag no">Kept as it is</span></div><div class="h">Already has its own version</div></div><div class="ctl"><span style="color:#6b6f78">No action</span></div></div>
+<div class="row"><div class="lab"><div class="t">Another agent <span class="tag rs">Changed</span></div><div class="h">You have changed this copy. TalkWeaver leaves it as it is.</div></div><div class="ctl"><button class="btn ">Replace</button></div></div>
+</div><p style="color:#6b6f78;font-size:12px;padding:0 4px">Connected copies are updated with each TalkWeaver update.</p></div></div></div></div></div></section><section class="frame" id="f6"><div class="flabel"><b>Frame 6</b><span>Later offer, one time</span><i>status bar, same place as the update notice</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div><div class="sbar"><span>Slide 1 of 3</span><span class="sp"></span><span class="mark">TalkWeaver found Codex · Install skill?</span><span>Version 2.4.0</span></div><div class="pop"><div style="font-weight:600;margin-bottom:3px">TalkWeaver found Codex.</div><div>Install the skill? You will be able to ask Codex to create and edit your presentations.</div><div class="b"><button class="btn pri">Install skill</button><button class="btn">Not now</button></div></div></div></div></section><section class="frame" id="f7"><div class="flabel"><b>Frame 7</b><span>None found, empty state</span><i>Settings card</i></div><div class="stage"><div class="win" style="left:0;top:0;right:0;bottom:0;border-radius:0;border:0;box-shadow:none"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Untitled talk</div></div><div class="deck"><div class="slides"><i></i><i></i><i></i></div><div class="canvas"><i></i></div></div></div><div class="win" style="left:70px;top:24px;width:860px;height:512px"><div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="tt">Settings</div></div><div class="body">
+<div class="side"><div class="grp">General</div><div class="nav">Appearance</div><div class="nav">Editing</div><div class="grp">Connections</div><div class="nav sel">Agents</div><div class="nav">Updates</div></div>
+<div class="pane"><div class="phead"><h1>Agents</h1></div><div class="pscroll"><div class="card"><div class="ch">Give your agents skills to use TalkWeaver</div><div class="empty"><div style="font-weight:600;font-size:14px">No agents found on this computer</div><div class="h">TalkWeaver looks for Claude Code, Codex, Antigravity and Gemini CLI when it starts. If you install one later, it will be offered here and in the status bar.</div></div></div></div></div></div></div></div></section></div></body></html>
