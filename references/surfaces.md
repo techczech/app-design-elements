@@ -11,6 +11,8 @@ Every feature that adds interface states its surface type before visual design. 
 | **Docked panel** | A tool for the current document that acts at the cursor or selection. It shares the main window and leaves the editor usable. | Image drawer, research panel, inspector |
 | **Window** | A work area of its own: it spans documents, runs many steps, or is worth keeping open side by side with the main window. It has its own state and survives switching document. | Studio, Publications, Settings |
 
+Build a Modal as a native `<dialog>` opened with `showModal()`, and a Float as a `popover` (or a plain panel where it must be movable). The browser then supplies focus containment, Esc, the inert background and focus return, so write no hand-made ARIA modal, focus trap or Esc handler. Use them for behaviour only: style fully to our design (reset the UA border, padding and max-width, style `::backdrop`). Never `alert()`, `confirm()` or `prompt()`.
+
 ## Choosing
 
 Ask in this order and stop at the first yes.
