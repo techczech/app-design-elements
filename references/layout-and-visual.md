@@ -68,7 +68,7 @@ A container establishes a meaningful relationship between content or controls. S
 ## Layout
 
 - **Application, not website:** panels, splitters, toolbars, panel-local scrolling, tool density. No hero sections or page rhythm.
-- **Light is the identity; dark is a settings option.** Deliberate choice; it differs from Modern Web Guidance's follow-the-system advice, so do not "fix" it. Still set `color-scheme` to the active theme.
+- **Theme follows the system; light is the fallback.** Follow the system light/dark setting. With no stored user choice and no system signal, default to light, never dark. Offer System / Light / Dark where the surface has settings, and set `color-scheme` to the active theme. Same rule as `web-design-elements` (apps and websites match; archive sites stay light only).
 - **Bounded sections:** panels separated by real contrast steps (stage → surface → row) and solid section header bars, not hairlines inside a narrow luminance band. The primary panel gets visible emphasis.
 - **Two scan axes:** left→right is the reading axis (depth, may run to two lines); top→bottom is the scanning axis (short rows, strong rhythm). A scannable list is narrow enough that a row reads without a horizontal journey; never title far left and status 700px away at the right edge.
 - **70/30 default** for dashboards and mixed surfaces: ~70% for what earns depth, ~30% for what needs attention only sometimes. Primary work goes where the eye should settle (left); a TOC or rail goes left because the eye leaves it for the read on the right.
@@ -96,3 +96,11 @@ A container establishes a meaningful relationship between content or controls. S
 ## Design rounds
 
 - Multi-option rounds carry a large identity badge (letter in a green rectangle, top-left) so options can be named when opened out of order; confirm a pick by name as well as letter.
+
+## Web platform basics in the renderer
+
+An Electron renderer is a web page, so the web basics apply. Rules and code live in `web-design-elements` (`references/motion-and-focus.md`, `references/safe-rendering-and-storage.md`); read them, do not copy them here.
+
+- **Motion:** animation and JS-driven smooth scrolling run only when `prefers-reduced-motion` is not `reduce`.
+- **Accessibility floor:** a visible `:focus-visible` style, `forced-colors` fallbacks where tint carries meaning, font sizes in `rem`.
+- **Safe rendering:** render user-typed or imported text with `textContent`; sanitise imported HTML. In Electron an injection can reach IPC and the filesystem, so this matters more than on the web. Storage is optional and wrapped in try/catch.

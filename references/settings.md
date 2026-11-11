@@ -19,7 +19,7 @@ Status: rules and the shared visual design are locked (2026-10-19).
 
 ## Typical sections
 
-General · Appearance (light default, dark option) · app-specific sections · Shortcuts · Accounts and keys · Changes · About. App sections are named by what the user is doing, not by subsystem.
+General · Appearance (System / Light / Dark; light when there is no signal) · app-specific sections · Shortcuts · Accounts and keys · Changes · About. App sections are named by what the user is doing, not by subsystem.
 
 ## Locked design (2026-10-19)
 
