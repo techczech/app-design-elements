@@ -4,6 +4,7 @@ Summary for design and review. The deep reference — modifier families, collisi
 
 ## Registry
 
+- Each command also declares a visible user-purpose group, a core/supplementary role and stable within-group order; see `command-purpose-and-priority.md`.
 - Each command: `id`, user-facing `name` (the user's words, grouped by what they are doing), `defaultChord` or explicit none, `when`/availability, `run`, `menu` placement (menu, group, order) or `noMenu` with a reason, and a class (content / view / settings / chrome) for agent access.
 - Readers generated from it: palette, cheat sheet, Settings › Shortcuts, menu bar, agent operation list. Nothing hand-copies a chord.
 - Shipping a command keyless is fine; shipping it unfindable is not.
@@ -13,6 +14,7 @@ Summary for design and review. The deep reference — modifier families, collisi
 - Complete command surface, not a search over a subset.
 - Shows each command's effective chord.
 - `⌘⇧,` rebinds the highlighted command in place.
+- **Visible purpose groups and core-first discovery (Dominik 2026-11-03):** every command belongs to a named user purpose, and the palette shows those headings in browse and search. Broad “read aloud” intent puts Start reading aloud before skip/speed adjustments; an explicit speed or skip query honours that specific intent. Roles are state-aware, grouping comes from registry metadata, and unavailable commands remain honest. Full pattern and acceptance: `command-purpose-and-priority.md`. Existing-app implementation remains open.
 
 ## Reserved chords
 

@@ -38,7 +38,7 @@ SECTION_MAP = {
     5: ["Reserved chords"], 6: ["macOS menu bar"], 7: ["Reserved chords"],
     8: ["Reserved chords"], 9: ["Reserved chords"],
     12: ["Onboarding is temporary"], 13: ["Help after onboarding"],
-    14: ["Layout", "Controls", "Design rounds"], 15: ["States and errors"],
+    14: ["Rule one: protect the vertical space", "Anti-patterns to avoid", "Containers express purpose", "Layout", "Controls", "Design rounds"], 15: ["States and errors"],
     16: ["Wording"],
 }
 
